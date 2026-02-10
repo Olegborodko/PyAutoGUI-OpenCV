@@ -1,0 +1,69 @@
+Як експериментувати:
+1. Чутливість (confidence):
+python
+# Високоя точність (тільки дуже схожі)
+settings = SearchSettings(confidence=0.8)
+
+# Середня (знайде схожі)
+settings = SearchSettings(confidence=0.6)
+
+# Низька (знайде навіть трохи схожі)
+settings = SearchSettings(confidence=0.4)
+2. Масштаби:
+python
+# Пошук у 5 різних масштабах
+settings = SearchSettings(scales=[0.8, 0.9, 1.0, 1.1, 1.2])
+3. Розмиття:
+python
+# Без розмиття
+settings = SearchSettings(blur=0)
+
+# Легке розмиття
+settings = SearchSettings(blur=2)
+
+# Сильне розмиття
+settings = SearchSettings(blur=5)
+4. Де клікати:
+python
+# По центру (замовчування)
+settings = SearchSettings(click_on="center")
+
+# Внизу картинки
+settings = SearchSettings(click_on="bottom")
+
+# Зверху
+settings = SearchSettings(click_on="top")
+
+# Зліва
+settings = SearchSettings(click_on="left")
+
+# Внизу праворуч
+settings = SearchSettings(click_on="bottomright")
+
+# Зі зміщенням
+settings = SearchSettings(click_on="bottom", click_offset=(0, -10))
+5. Методи пошуку:
+python
+# TM_CCOEFF_NORMED - найкраще для чітких зображень
+# TM_CCORR_NORMED - краще для нечітких
+# TM_SQDIFF_NORMED - для дуже відмінних зображень
+Тестувальний скрипт:
+Створи файл experiment.py:
+
+python
+from image_searcher import ImageSearcher, SearchSettings
+
+searcher = ImageSearcher()
+
+# Тестуємо різні комбінації
+test_configs = [
+    {"confidence": 0.8, "grayscale": False, "blur": 0},
+    {"confidence": 0.6, "grayscale": True, "blur": 1},
+    {"confidence": 0.5, "grayscale": True, "blur": 2, "scales": [0.9, 1.0, 1.1]},
+    {"confidence": 0.4, "grayscale": False, "blur": 3, "click_on": "bottom"},
+]
+
+for i, config in enumerate(test_configs, 1):
+    print(f"\n📊 Конфігурація {i}: {config}")
+    settings = SearchSettings(**config)
+    searcher.find_image("your_image.png", settings)
