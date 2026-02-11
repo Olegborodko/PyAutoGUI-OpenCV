@@ -1,10 +1,11 @@
 # Імпортуємо привітання
 import greatings
 import time
+import pyautogui
 
 # Імпортуємо наші функції
 from image_utils import SearchSettings, find_image, click_at_position
-from text_utils import copy_text_from_position
+from text_utils import copy_text_from_position, select_and_delete_from_position, paste_text
 from random_utils import random_sleep
 from error_handler import handle_error
 
@@ -101,7 +102,32 @@ def main_workflow():
     
     random_sleep()
 
-    # КРОК 6
+    # 1. Виділяємо та видаляємо текст з текстового поля
+    print("\n✂️ Виділяю та видаляю текст з текстового поля...")
+    deleted_text = select_and_delete_from_position(position[0], position[1])
+    
+    if deleted_text is False:
+        print("❌ Не вдалося виділити та видалити текст")
+        return False
+    
+    print(f"✅ Текст успішно видалено: {deleted_text[:100]}..." if len(deleted_text) > 100 else f"✅ Текст успішно видалено: {deleted_text}")
+    
+    random_sleep()
+    
+    # 2. Вставляємо текст з буфера обміну (текст з КРОК 2 вже в буфері)
+    print("\n📋 Вставляю текст з буфера обміну...")
+    if not paste_text():
+        print("❌ Не вдалося вставити текст")
+        return False
+    
+    random_sleep()
+    
+    # 3. Натискаємо Enter
+    print("\n↵ Натискаю клавішу Enter...")
+    pyautogui.press('enter')
+    time.sleep(0.5)
+    
+    print("✅ Enter натиснуто успішно!")
     
     return True
 
