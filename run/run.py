@@ -5,6 +5,7 @@ import greatings
 from image_utils import SearchSettings, find_image, click_at_position
 from text_utils import copy_text_from_position
 from random_utils import random_sleep
+from error_handler import handle_error
 
 def find_and_click(image_name, settings):
     """Пошук зображення та клік по ньому. Повертає позицію або False"""
@@ -100,15 +101,6 @@ def main_workflow():
     time.sleep(1)
     
     return True
-
-def handle_error(error_message: str):
-    """Обробка помилок"""
-    print("\n" + "=" * 60)
-    print("🚨 ПОМИЛКА В РОБОТІ")
-    print("=" * 60)
-    print(f"Повідомлення про помилку: {error_message}")
-    print("Робота завершена з помилкою.")
-    print("=" * 60)
 
 def main():
     """Головна функція"""
