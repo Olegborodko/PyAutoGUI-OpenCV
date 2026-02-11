@@ -18,14 +18,15 @@ def find_and_click(image_name, settings):
     
     print(f"✅ Зображення знайдено за координатами: {position}")
     
-    random_sleep()
-    
     print(f"🖱️ Клікаю по знайденій позиції...")
     if not click_at_position(position):
         print(f"❌ Не вдалося виконати клік для '{image_name}'.")
         return False
     
     print("✅ Клік виконано успішно!")
+
+    random_sleep()
+
     return position
 
 def copy_text_from_coords(x, y):
@@ -43,18 +44,21 @@ def copy_text_from_coords(x, y):
 
 def main_workflow():
     # Базові налаштування пошуку зображення
+    # center, top, bottom, left, right, ...
     base_settings = SearchSettings(
         confidence=0.7,
         grayscale=False,
         blur=0,
         scales=[0.9, 1.0, 1.1],
-        click_on="bottom",
+        click_on="center",
         click_offset=(0, 0),
         max_attempts=3,
         search_timeout=10.0
     )
     
     # КРОК 1: Пошук та клік по зображенню
+    base_settings.click_on = "bottom"
+    base_settings.click_offset = (0, 3) # на 3px нижче
     position = find_and_click("1.png", base_settings)
     if not position:
         return False
@@ -72,15 +76,15 @@ def main_workflow():
     
     # КРОК 3: Пошук та клік по зображенню хром браузера
     base_settings.click_on = "center"
-    base_settings.click_offset = (0, -3)
+    base_settings.click_offset = (0, 0)
     
     position = find_and_click("11.png", base_settings)
     if not position:
         return False
     
     # Фіксована затримка 5 секунд після кроку 5
-    print("\n⏳ Затримка 5 секунд...")
-    time.sleep(5)
+    print("\n⏳ Затримка 3 секунд...")
+    time.sleep(3)
     
     # КРОК 4: Пошук та клік
     position = find_and_click("9.png", base_settings)
@@ -90,15 +94,16 @@ def main_workflow():
     time.sleep(1)
     
     # КРОК 5: Пошук та клік з іншими налаштуваннями
-    # Змінюємо тільки click_on та click_offset
     base_settings.click_on = "right"
-    base_settings.click_offset = (0, 0)
+    base_settings.click_offset = (3, 0) # на 3px правіше
     
     position = find_and_click("12.png", base_settings)
     if not position:
         return False
     
     time.sleep(1)
+
+    # КРОК 6
     
     return True
 
