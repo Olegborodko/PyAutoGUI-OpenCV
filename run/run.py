@@ -25,8 +25,6 @@ def find_and_click(image_name, settings):
     
     print("✅ Клік виконано успішно!")
 
-    random_sleep()
-
     return position
 
 def copy_text_from_coords(x, y):
@@ -82,8 +80,7 @@ def main_workflow():
     if not position:
         return False
     
-    # Фіксована затримка 5 секунд після кроку 5
-    print("\n⏳ Затримка 3 секунд...")
+    print("\n⏳ Затримка 3 секунд щоб відкрився браузер")
     time.sleep(3)
     
     # КРОК 4: Пошук та клік
@@ -91,7 +88,7 @@ def main_workflow():
     if not position:
         return False
     
-    time.sleep(1)
+    random_sleep()
     
     # КРОК 5: Пошук та клік з іншими налаштуваннями
     base_settings.click_on = "right"
@@ -101,7 +98,7 @@ def main_workflow():
     if not position:
         return False
     
-    time.sleep(1)
+    random_sleep()
 
     # КРОК 6
     
