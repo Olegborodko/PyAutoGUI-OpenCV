@@ -104,9 +104,7 @@ def click_at_position(position, double_click=True):
         
         if double_click:
             print("   Подвійний клік...")
-            pyautogui.click()
-            random_sleep()
-            pyautogui.click()
+            pyautogui.doubleClick()
         else:
             print("   Одинарний клік...")
             pyautogui.click()

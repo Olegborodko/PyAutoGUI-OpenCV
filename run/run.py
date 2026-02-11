@@ -1,5 +1,6 @@
 # Імпортуємо привітання
 import greatings
+import time
 
 # Імпортуємо наші функції
 from image_utils import SearchSettings, find_image, click_at_position

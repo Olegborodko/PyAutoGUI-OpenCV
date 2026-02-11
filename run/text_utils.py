@@ -23,10 +23,14 @@ def select_and_copy_text():
             print(f"   Спробую: {method_desc}")
             
             try:
+                # Спершу очистимо буфер обміну
+                pyperclip.copy('')
+                
+                # Скинемо можливе контекстне меню
                 pyautogui.click(button='right')
-                random_sleep()
+                time.sleep(0.05)  # Дуже коротка затримка для стабільності
                 pyautogui.press('esc')
-                random_sleep()
+                time.sleep(0.05)  # Дуже коротка затримка для стабільності
                 
                 if method_name == "double_click":
                     pyautogui.doubleClick()
@@ -35,9 +39,9 @@ def select_and_copy_text():
                 elif method_name == "ctrl_a":
                     pyautogui.hotkey('ctrl', 'a')
                 
-                random_sleep()
+                time.sleep(0.1)  # Коротка затримка для виділення тексту
                 pyautogui.hotkey('ctrl', 'c')
-                random_sleep()
+                time.sleep(0.1)  # Коротка затримка для копіювання
                 
                 copied_text = pyperclip.paste()
                 
