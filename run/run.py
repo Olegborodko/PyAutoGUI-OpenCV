@@ -175,6 +175,13 @@ def main_workflow():
     random_sleep(1, 2)
 
     
+    # КРОК 15
+    position = find_and_click("15.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(3, 5)
+
     
     return True
 
