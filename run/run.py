@@ -161,13 +161,37 @@ def main_workflow():
     
     random_sleep(1)
 
-     # КРОК 12
+    # КРОК 12
+    base_settings.click_on = "center"
+    position = find_and_click("16.png", base_settings)
+    if not position:
+        return False
+
+    random_sleep(0.5, 1)
+
+    # КРОК 12
     base_settings.click_on = "center"
     position = find_and_click("16.png", base_settings)
     if not position:
         return False
     
-    random_sleep(3)
+    random_sleep(1, 2)
+
+    # КРОК 12
+    base_settings.click_on = "center"
+    position = find_and_click("17.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(0.5, 1)
+
+    # КРОК 12
+    base_settings.click_on = "center"
+    position = find_and_click("17.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(0.5, 1)
 
     # КРОК 13
     if not paste_text(copied_text_from_steep2):
@@ -200,6 +224,20 @@ def main_workflow():
         return False
     
     random_sleep(2, 2)
+
+    # КРОК 18
+    position = find_and_click("18.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(1, 2)
+
+     # КРОК 19
+    position = find_and_click("19.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(1, 2)
 
     
     return True
