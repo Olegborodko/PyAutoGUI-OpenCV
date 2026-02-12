@@ -159,35 +159,43 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep(0.5, 1)
+    random_sleep(1)
 
-    # КРОК 12
+     # КРОК 12
+    base_settings.click_on = "center"
+    position = find_and_click("16.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(3)
+
+    # КРОК 13
     if not paste_text(copied_text_from_steep2):
         print("❌ Не вдалося вставити текст")
         return False
     
     random_sleep(0.5, 1)
 
-    # КРОК 13
+    # КРОК 14
     print("\n↵ Натискаю клавішу Enter...")
     pyautogui.press('enter')
 
-    # КРОК 14
+    # КРОК 15
     position = find_and_click("14.png", base_settings)
     if not position:
         return False
     
     random_sleep(1, 2)
     
-    # КРОК 15
+    # КРОК 16
     position = find_and_click("15.png", base_settings)
     if not position:
         return False
     
     random_sleep(3, 5)
 
-    # КРОК 16
-    position = find_and_click("16.png", base_settings)
+    # КРОК 17
+    position = find_and_click("2.png", base_settings)
     if not position:
         return False
     
