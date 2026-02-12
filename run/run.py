@@ -167,6 +167,13 @@ def main_workflow():
     print("\n↵ Натискаю клавішу Enter...")
     pyautogui.press('enter')
 
+    # КРОК 14
+    position = find_and_click("14.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(1, 2)
+
     
     
     return True
