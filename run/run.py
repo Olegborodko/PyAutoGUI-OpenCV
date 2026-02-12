@@ -239,14 +239,14 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep(3, 3)
+    random_sleep(1, 2)
 
      # КРОК 19
     position = find_and_click("19.png", base_settings)
     if not position:
         return False
     
-    random_sleep(3, 3)
+    random_sleep(1, 2)
     
     # КРОК 16
     position = find_and_click("15.png", base_settings)
