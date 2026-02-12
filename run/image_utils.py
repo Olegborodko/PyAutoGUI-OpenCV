@@ -50,7 +50,6 @@ def find_image(image_name, settings, images_folder="images"):
         
         while attempts < settings.max_attempts and (time.time() - start_time) < settings.search_timeout:
             attempts += 1
-            print(f"   Спроба {attempts}/{settings.max_attempts}")
             
             screenshot = pyautogui.screenshot()
             screen = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
@@ -81,11 +80,8 @@ def find_image(image_name, settings, images_folder="images"):
                     best_match = click_point
             
             if best_match:
-                print(f"   ✅ Знайдено! Впевненість: {best_confidence:.3f}")
-                print(f"   📍 Координати: {best_match}")
                 return best_match
             else:
-                print(f"   ❌ Не знайдено (найкраща впевненість: {best_confidence:.3f})")
                 if attempts < settings.max_attempts:
                     random_sleep()
         
@@ -103,13 +99,10 @@ def click_at_position(position, double_click=True):
         pyautogui.moveTo(x, y, duration=random_duration())
         
         if double_click:
-            print("   Подвійний клік...")
             pyautogui.doubleClick()
         else:
-            print("   Одинарний клік...")
             pyautogui.click()
         
-        print(f"   ✅ Клік виконано")
         return True
         
     except Exception as e:

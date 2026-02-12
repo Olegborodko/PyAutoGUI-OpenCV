@@ -20,12 +20,9 @@ def find_and_click(image_name, settings):
     
     print(f"✅ Зображення знайдено за координатами: {position}")
     
-    print(f"🖱️ Клікаю по знайденій позиції...")
     if not click_at_position(position):
         print(f"❌ Не вдалося виконати клік для '{image_name}'.")
         return False
-    
-    print("✅ Клік виконано успішно!")
 
     return position
 
@@ -110,8 +107,6 @@ def main_workflow():
         print("❌ Не вдалося виділити та видалити текст")
         return False
     
-    print(f"✅ Текст успішно видалено: {deleted_text[:100]}..." if len(deleted_text) > 100 else f"✅ Текст успішно видалено: {deleted_text}")
-    
     random_sleep(0.3, 1)
 
     # КРОК 7: Пошук та клік
@@ -173,7 +168,6 @@ def main_workflow():
         return False
     
     random_sleep(1, 2)
-
     
     # КРОК 15
     position = find_and_click("15.png", base_settings)
