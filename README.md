@@ -18,13 +18,24 @@ PyAutoGUI + OpenCV бот для автоматизации задач.
 
 4. Установите зависимости:
    ```bash
-   pip install pyautogui opencv-python pillow numpy
+   pip install pyautogui opencv-python pillow numpy keyboard pyperclip
    ```
 
 5. Проверьте установку:
    ```bash
-   python -c "import pyautogui; import cv2; import PIL; import numpy; print('Все библиотеки загружены успешно!')"
+   python -c "import pyautogui; import cv2; import PIL; import numpy; import keyboard; import pyperclip; print('Все библиотеки загружены успешно!')"
    ```
+## Скачайте и установите git на компьютер
+
+## Запуск программы
+
+Основная программа находится в файле `C:\rdp_bot\run\run.py`
+
+Для запуска выполните:
+```bash
+cd C:\rdp_bot\run
+python run.py
+```
 
 ## Установка проекта
 
