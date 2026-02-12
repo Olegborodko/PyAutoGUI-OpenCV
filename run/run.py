@@ -154,12 +154,42 @@ def main_workflow():
 
     # КРОК 11
     base_settings.click_on = "bottom"
-    base_settings.click_offset = (0, 1)
+    base_settings.click_offset = (0, 3)
     position = find_and_click("13.png", base_settings)
     if not position:
         return False
     
     random_sleep(1)
+
+    # КРОК 6: Виділяємо та видаляємо текст з текстового поля
+    print("\n✂️ Виділяю та видаляю текст з текстового поля...")
+    text_deleted = select_and_delete_from_position(position[0], position[1])
+    
+    if not text_deleted:
+        print("❌ Не вдалося виділити та видалити текст")
+        return False
+    
+    random_sleep(0.3, 1)
+
+     # КРОК 11
+    base_settings.click_on = "bottom"
+    base_settings.click_offset = (0, 3)
+    position = find_and_click("13.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(1)
+
+     # КРОК 8
+    if not paste_text(copied_text_from_steep2):
+        print("❌ Не вдалося вставити текст")
+        return False
+    
+    random_sleep(0.5, 1)
+
+    # КРОК 14
+    print("\n↵ Натискаю клавішу Enter...")
+    pyautogui.press('enter')
 
     # КРОК 12
     base_settings.click_on = "center"
