@@ -81,7 +81,7 @@ def copy_text_from_position(x, y):
         return None
 
 def select_and_delete_text():
-    """Виділяє та видаляє текст (вирізає). Повертає видалений текст або None"""
+    """Виділяє та видаляє текст (вирізає). Повертає True у разі успіху"""
     try:
         print("✂️ Виділяю та видаляю текст...")
         
@@ -98,9 +98,6 @@ def select_and_delete_text():
             print(f"   Спробую: {method_desc}")
             
             try:
-                # Спершу очистимо буфер обміну
-                pyperclip.copy('')
-                
                 # Скинемо можливе контекстне меню
                 pyautogui.click(button='right')
                 time.sleep(0.05)
@@ -116,39 +113,23 @@ def select_and_delete_text():
                 
                 time.sleep(0.1)  # Коротка затримка для виділення тексту
                 
-                # Копіюємо текст в буфер обміну (Ctrl+C)
-                pyautogui.hotkey('ctrl', 'c')
+                # Видаляємо виділений текст (Delete)
+                pyautogui.press('delete')
                 time.sleep(0.1)
                 
-                # Отримуємо текст з буфера обміну
-                copied_text = pyperclip.paste()
-                
-                if copied_text:
-                    copied_text = copied_text.strip()
-                    if copied_text:
-                        # Видаляємо виділений текст (Delete або Backspace)
-                        pyautogui.press('delete')
-                        time.sleep(0.1)
-                        
-                        preview = copied_text[:100] + "..." if len(copied_text) > 100 else copied_text
-                        print(f"   ✅ {method_desc} спрацював! Текст видалено.")
-                        print(f"   📋 Видалений текст: {preview}")
-                        return copied_text
-                    else:
-                        print(f"   ❌ {method_desc} не спрацював (текст порожній)")
-                else:
-                    print(f"   ❌ {method_desc} не спрацював (буфер порожній)")
+                print(f"   ✅ {method_desc} спрацював! Текст видалено.")
+                return True
                     
             except Exception as e:
                 print(f"   ⚠️ Помилка: {e}")
                 continue
         
         print("❌ Жоден метод не спрацював")
-        return None
+        return False
             
     except Exception as e:
         print(f"❌ Помилка: {e}")
-        return None
+        return False
 
 def paste_text(text_to_paste):
     """Вставляє переданий текст різними способами (fallback-механізм). Повертає True у разі успіху"""
@@ -214,7 +195,7 @@ def paste_text(text_to_paste):
         return False
 
 def select_and_delete_from_position(x, y):
-    """Переміщується до позиції та видаляє текст. Повертає видалений текст або None"""
+    """Переміщується до позиції та видаляє текст. Повертає True у разі успіху"""
     try:
         print(f"📍 Переміщую до ({x}, {y}) для видалення тексту")
         pyautogui.moveTo(x, y, duration=random.uniform(0.1, 1.0))
@@ -224,4 +205,4 @@ def select_and_delete_from_position(x, y):
         
     except Exception as e:
         print(f"❌ Помилка: {e}")
-        return None
+        return False

@@ -111,9 +111,9 @@ def main_workflow():
 
     # КРОК 6: Виділяємо та видаляємо текст з текстового поля
     print("\n✂️ Виділяю та видаляю текст з текстового поля...")
-    deleted_text = select_and_delete_from_position(position[0], position[1])
+    text_deleted = select_and_delete_from_position(position[0], position[1])
     
-    if not deleted_text:
+    if not text_deleted:
         print("❌ Не вдалося виділити та видалити текст")
         return False
     
