@@ -2,6 +2,12 @@ import pyautogui
 import pyperclip
 import time
 import random
+import pytesseract
+from PIL import ImageGrab
+import os
+
+# Налаштування шляху до Tesseract OCR (якщо потрібно)
+# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def random_sleep():
     time.sleep(random.uniform(0.1, 1.0))
@@ -39,10 +45,12 @@ def select_and_copy_text():
                 elif method_name == "ctrl_a":
                     pyautogui.hotkey('ctrl', 'a')
                 
-                time.sleep(0.1)  # Коротка затримка для виділення тексту
+                time.sleep(0.2)  # Збільшена затримка для виділення тексту
                 pyautogui.hotkey('ctrl', 'c')
-                time.sleep(0.1)  # Коротка затримка для копіювання
+                time.sleep(0.3)  # Збільшена затримка для копіювання
                 
+                # Додаткова перевірка буферу обміну
+                time.sleep(0.1)
                 copied_text = pyperclip.paste()
                 
                 if copied_text:
@@ -193,6 +201,48 @@ def paste_text(text_to_paste):
     except Exception as e:
         print(f"❌ Загальна помилка при вставці тексту: {e}")
         return False
+
+def copy_text_without_clipboard(x, y, width=200, height=50):
+    """Копіює текст з екрану через OCR без використання буферу обміну"""
+    try:
+        print(f"🔍 Копіюю текст через OCR з позиції ({x}, {y})...")
+        
+        # Захоплюємо область екрану
+        left = x - width // 2
+        top = y - height // 2
+        right = x + width // 2
+        bottom = y + height // 2
+        
+        # Переконуємося, що координати в межах екрану
+        screen_width, screen_height = pyautogui.size()
+        left = max(0, left)
+        top = max(0, top)
+        right = min(screen_width, right)
+        bottom = min(screen_height, bottom)
+        
+        # Захоплюємо зображення
+        screenshot = ImageGrab.grab(bbox=(left, top, right, bottom))
+        
+        # Використовуємо OCR для розпізнавання тексту
+        text = pytesseract.image_to_string(screenshot, lang='eng+ukr+rus')
+        
+        if text:
+            text = text.strip()
+            if text:
+                preview = text[:100] + "..." if len(text) > 100 else text
+                print(f"✅ Текст успішно розпізнано через OCR!")
+                print(f"📋 Текст: {preview}")
+                return text
+            else:
+                print("❌ OCR розпізнав порожній текст")
+        else:
+            print("❌ OCR не зміг розпізнати текст")
+        
+        return None
+        
+    except Exception as e:
+        print(f"❌ Помилка при OCR: {e}")
+        return None
 
 def select_and_delete_from_position(x, y):
     """Переміщується до позиції та видаляє текст. Повертає True у разі успіху"""
