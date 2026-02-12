@@ -171,7 +171,7 @@ def main_workflow():
     
     random_sleep(0.3, 1)
 
-     # КРОК 11
+    # КРОК 11
     base_settings.click_on = "bottom"
     base_settings.click_offset = (0, 3)
     position = find_and_click("13.png", base_settings)
@@ -190,6 +190,15 @@ def main_workflow():
     # КРОК 14
     print("\n↵ Натискаю клавішу Enter...")
     pyautogui.press('enter')
+
+     # КРОК 11
+    base_settings.click_on = "bottom"
+    base_settings.click_offset = (0, 10)
+    position = find_and_click("20.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(1)
 
     # КРОК 12
     base_settings.click_on = "center"
