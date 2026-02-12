@@ -62,11 +62,11 @@ def select_and_copy_text():
                 continue
         
         print("❌ Жоден метод не спрацював")
-        return False
+        return None
             
     except Exception as e:
         print(f"❌ Помилка: {e}")
-        return False
+        return None
 
 def copy_text_from_position(x, y):
     try:
@@ -78,10 +78,10 @@ def copy_text_from_position(x, y):
         
     except Exception as e:
         print(f"❌ Помилка: {e}")
-        return False
+        return None
 
 def select_and_delete_text():
-    """Виділяє та видаляє текст (вирізає). Повертає видалений текст або False"""
+    """Виділяє та видаляє текст (вирізає). Повертає видалений текст або None"""
     try:
         print("✂️ Виділяю та видаляю текст...")
         
@@ -144,11 +144,11 @@ def select_and_delete_text():
                 continue
         
         print("❌ Жоден метод не спрацював")
-        return False
+        return None
             
     except Exception as e:
         print(f"❌ Помилка: {e}")
-        return False
+        return None
 
 def paste_text(text_to_paste):
     """Вставляє переданий текст різними способами (fallback-механізм). Повертає True у разі успіху"""
@@ -218,7 +218,7 @@ def paste_text(text_to_paste):
         return False
 
 def select_and_delete_from_position(x, y):
-    """Переміщується до позиції та видаляє текст. Повертає видалений текст або False"""
+    """Переміщується до позиції та видаляє текст. Повертає видалений текст або None"""
     try:
         print(f"📍 Переміщую до ({x}, {y}) для видалення тексту")
         pyautogui.moveTo(x, y, duration=random.uniform(0.1, 1.0))
@@ -228,4 +228,4 @@ def select_and_delete_from_position(x, y):
         
     except Exception as e:
         print(f"❌ Помилка: {e}")
-        return False
+        return None

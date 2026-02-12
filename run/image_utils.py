@@ -33,12 +33,12 @@ def find_image(image_name, settings, images_folder="images"):
         
         if not image_path.exists():
             print(f"❌ Файл не знайдено: {image_path}")
-            return False
+            return None
         
         template = cv2.imread(str(image_path))
         if template is None:
             print(f"❌ Не вдалося завантажити: {image_path}")
-            return False
+            return None
         
         if template.shape[2] == 4:
             template = cv2.cvtColor(template, cv2.COLOR_BGRA2BGR)
@@ -90,11 +90,11 @@ def find_image(image_name, settings, images_folder="images"):
                     random_sleep()
         
         print(f"❌ Не вдалося знайти '{image_name}'")
-        return False
+        return None
         
     except Exception as e:
         print(f"❌ Помилка: {e}")
-        return False
+        return None
 
 def click_at_position(position, double_click=True):
     try:

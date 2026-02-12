@@ -106,7 +106,7 @@ def main_workflow():
     print("\n✂️ Виділяю та видаляю текст з текстового поля...")
     deleted_text = select_and_delete_from_position(position[0], position[1])
     
-    if deleted_text is False:
+    if not deleted_text:
         print("❌ Не вдалося виділити та видалити текст")
         return False
     
