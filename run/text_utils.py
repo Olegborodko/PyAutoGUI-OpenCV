@@ -159,8 +159,28 @@ def paste_text(text_to_paste):
             print("❌ Текст для вставки порожній")
             return False
         
-        # МЕТОД 1: Спробувати вставити текст через Ctrl+V
-        print("   Спробую Ctrl+V...")
+        # МЕТОД 1: Спробувати ввести текст через write (без буфера обміну)
+        print("   Спробую ввести текст через write...")
+        try:
+            pyautogui.write(text_to_paste, interval=0.01)
+            time.sleep(0.1)
+            print("✅ Текст успішно введено через write!")
+            return True
+        except Exception as e:
+            print(f"   ❌ Помилка при введенні через write: {e}")
+        
+        # МЕТОД 2: Спробувати через typewrite
+        print("   Спробую через typewrite...")
+        try:
+            pyautogui.typewrite(text_to_paste, interval=0.05)
+            time.sleep(0.1)
+            print("✅ Текст успішно введено через typewrite!")
+            return True
+        except Exception as e:
+            print(f"   ❌ Помилка при введенні через typewrite: {e}")
+        
+        # МЕТОД 3: Спробувати вставити текст через Ctrl+V (з буфером обміну)
+        print("   Спробую Ctrl+V з буфером обміну...")
         try:
             # Копіюємо текст в буфер обміну
             pyperclip.copy(text_to_paste)
@@ -174,38 +194,14 @@ def paste_text(text_to_paste):
         except Exception as e:
             print(f"   ❌ Ctrl+V не спрацював: {e}")
         
-        # МЕТОД 2: Спробувати через keyDown/keyUp
-        print("   Спробую альтернативну комбінацію клавіш...")
+        # МЕТОД 4: Остання спроба - посимвольний ввід
+        print("   Спробую останній метод (посимвольний ввід)...")
         try:
-            # Переконаємося, що текст у буфері обміну
-            pyperclip.copy(text_to_paste)
-            time.sleep(0.05)
-            
-            pyautogui.keyDown('ctrl')
-            pyautogui.press('v')
-            pyautogui.keyUp('ctrl')
+            for char in text_to_paste:
+                pyautogui.press(char)
+                time.sleep(0.01)
             time.sleep(0.1)
-            print("✅ Текст успішно вставлено через альтернативний метод!")
-            return True
-        except Exception as e:
-            print(f"   ❌ Альтернативний метод не спрацював: {e}")
-        
-        # МЕТОД 3: Вводити текст посимвольно через write
-        print("   Спробую ввести текст посимвольно (write)...")
-        try:
-            pyautogui.write(text_to_paste, interval=0.01)
-            time.sleep(0.1)
-            print("✅ Текст успішно введено посимвольно через write!")
-            return True
-        except Exception as e:
-            print(f"   ❌ Помилка при введенні через write: {e}")
-        
-        # МЕТОД 4: Остання спроба - через typewrite
-        print("   Спробую останній метод (typewrite)...")
-        try:
-            pyautogui.typewrite(text_to_paste, interval=0.05)
-            time.sleep(0.1)
-            print("✅ Текст успішно введено через typewrite!")
+            print("✅ Текст успішно введено посимвольно!")
             return True
         except Exception as e:
             print(f"   ❌ Останній метод не спрацював: {e}")
