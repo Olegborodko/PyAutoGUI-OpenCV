@@ -39,7 +39,15 @@ def find_and_click(image_name, settings):
 def copy_text_from_coords(x, y):
     """Копіювання тексту з позиції. Повертає текст або None"""
     print(f"\n📋 Копіюю текст з позиції ({x}, {y})...")
-    copied_text = copy_text_from_position(x, y)
+    
+    # Спочатку спробуємо через OCR без буферу обміну
+    from text_utils import copy_text_without_clipboard
+    copied_text = copy_text_without_clipboard(x, y, width=300, height=80)
+    
+    # Якщо OCR не спрацював, спробуємо звичайний метод
+    if not copied_text:
+        print("⚠️ OCR не спрацював, спробую звичайний метод...")
+        copied_text = copy_text_from_position(x, y)
     
     if not copied_text:
         print("❌ Не вдалося скопіювати текст.")
@@ -239,14 +247,14 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep(1, 2)
+    random_sleep(3, 3)
 
      # КРОК 19
     position = find_and_click("19.png", base_settings)
     if not position:
         return False
     
-    random_sleep(1, 2)
+    random_sleep(3, 3)
     
     # КРОК 16
     position = find_and_click("15.png", base_settings)
