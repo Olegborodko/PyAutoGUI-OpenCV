@@ -18,14 +18,43 @@ PyAutoGUI + OpenCV бот для автоматизации задач.
 
 4. Установите зависимости:
    ```bash
-   pip install pyautogui opencv-python pillow numpy keyboard pyperclip
+   pip install pyautogui opencv-python pillow numpy keyboard pyperclip pytesseract
    ```
 
 5. Проверьте установку:
    ```bash
-   python -c "import pyautogui; import cv2; import PIL; import numpy; import keyboard; import pyperclip; print('Все библиотеки загружены успешно!')"
+   python -c "import pyautogui; import cv2; import PIL; import numpy; import keyboard; import pyperclip; import pytesseract; print('Все библиотеки загружены успешно!')"
    ```
+
 ## Скачайте и установите git на компьютер
+
+## Как запустить run.py с компьютера
+
+1. **Открыть Анаконду** - запустите Anaconda Prompt
+   
+2. **Перейти в папку C:\rdp_bot\run**:
+   ```bash
+   cd C:\rdp_bot\run
+   ```
+   Или пошагово:
+   ```bash
+   cd ..
+   cd ..
+   cd rdp_bot
+   cd run
+   ```
+
+3. **Активировать среду**:
+   ```bash
+   conda activate r_bot
+   ```
+
+4. **Запустить скрипт run.py**:
+   ```bash
+   python run.py
+   ```
+
+5. **Остановить скрипт** - нажмите комбинацию клавиш **Ctrl+Shift+Q**
 
 ## Запуск программы
 
