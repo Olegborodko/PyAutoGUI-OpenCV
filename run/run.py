@@ -64,7 +64,7 @@ def main_workflow():
         return False
     
     # Рандомна затримка між кроками
-    random_sleep()
+    random_sleep(0.3, 1)
     
     # КРОК 2: Копіювання тексту з позиції
     copied_text_from_steep2 = copy_text_from_coords(position[0], position[1])
@@ -72,7 +72,7 @@ def main_workflow():
         return False
     
     # Рандомна затримка між кроками
-    random_sleep()
+    random_sleep(0.3, 1)
     
     # КРОК 3: Пошук та клік по зображенню хром браузера
     base_settings.click_on = "center"
@@ -90,7 +90,7 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep()
+    random_sleep(1, 2)
     
     # КРОК 5: Пошук та клік з іншими налаштуваннями
     base_settings.click_on = "right"
@@ -100,7 +100,7 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep()
+    random_sleep(0.3, 1)
 
     # КРОК 6: Виділяємо та видаляємо текст з текстового поля
     print("\n✂️ Виділяю та видаляю текст з текстового поля...")
@@ -112,7 +112,7 @@ def main_workflow():
     
     print(f"✅ Текст успішно видалено: {deleted_text[:100]}..." if len(deleted_text) > 100 else f"✅ Текст успішно видалено: {deleted_text}")
     
-    random_sleep()
+    random_sleep(0.3, 1)
 
     # КРОК 7: Пошук та клік
     base_settings.click_on = "right"
@@ -122,26 +122,54 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep()
+    random_sleep(0.5, 1)
     
     # КРОК 8
-    print("\n📋 Вставляю текст з буфера обміну...")
     if not paste_text(copied_text_from_steep2):
         print("❌ Не вдалося вставити текст")
         return False
     
-    random_sleep()
+    random_sleep(0.5, 1)
     
     # КРОК 9
     print("\n↵ Натискаю клавішу Enter...")
     pyautogui.press('enter')
-    time.sleep(0.5)
+
+    random_sleep(1, 2)
+
+    # КРОК 10
+    base_settings.click_on = "center"
+    base_settings.click_offset = (0, 0)
     
-    print("✅ Enter натиснуто успішно!")
+    position = find_and_click("10.png", base_settings)
+    if not position:
+        return False
     
-    return True
+    random_sleep(1, 2)
+
+    # КРОК 11
+    base_settings.click_on = "bottom"
+    base_settings.click_offset = (0, 1)
+    position = find_and_click("13.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(0.5, 1)
+
+    # КРОК 12
+    if not paste_text(copied_text_from_steep2):
+        print("❌ Не вдалося вставити текст")
+        return False
+    
+    random_sleep(0.5, 1)
+
+    # КРОК 13
+    print("\n↵ Натискаю клавішу Enter...")
+    pyautogui.press('enter')
 
     
+    
+    return True
 
 def main():
     """Головна функція"""
