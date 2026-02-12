@@ -2,12 +2,22 @@
 import greatings
 import time
 import pyautogui
+import keyboard  # Для отслеживания горячих клавиш
 
 # Імпортуємо наші функції
 from image_utils import SearchSettings, find_image, click_at_position
 from text_utils import copy_text_from_position, select_and_delete_from_position, paste_text
 from random_utils import random_sleep
 from error_handler import handle_error
+
+# Глобальная переменная для контроля выполнения
+should_stop = False
+
+def stop_program():
+    """Функция для остановки программы по горячей клавише"""
+    global should_stop
+    should_stop = True
+    print("\n🛑 Сигнал остановки получен! Завершаю текущий цикл...")
 
 def find_and_click(image_name, settings):
     """Пошук зображення та клік по ньому. Повертає позицію або False"""
@@ -176,26 +186,58 @@ def main_workflow():
     
     random_sleep(3, 5)
 
+    # КРОК 16
+    position = find_and_click("16.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(2, 2)
+
     
     return True
 
 def main():
     """Головна функція"""
+    global should_stop
+    
+    print("\n" + "=" * 60)
+    print("🚀 ПРОГРАМА ЗАПУЩЕНА")
+    print("📌 Для зупинки натисніть Ctrl+Shift+Q")
+    print("=" * 60)
+    
+    # Регистрируем горячую клавишу для остановки
+    keyboard.add_hotkey('ctrl+shift+q', stop_program)
+    
+    cycle_count = 0
+    
     try:
-        success = main_workflow()
-        
-        if success:
-            print("\n" + "=" * 60)
-            print("✅ РОБОТУ УСПІШНО ЗАВЕРШЕНО!")
-            print("=" * 60)
-        else:
-            print("\n" + "=" * 60)
-            print("❌ РОБОТУ ЗАВЕРШЕНО З ПОМИЛКАМИ")
-            print("=" * 60)
+        while not should_stop:
+            cycle_count += 1
+            print(f"\n🔄 ЦИКЛ #{cycle_count}")
+            print("-" * 40)
+            
+            success = main_workflow()
+            
+            if not success:
+                print("❌ РОБОТУ ЗАВЕРШЕНО З ПОМИЛКАМИ - ПРОГРАМА ЗУПИНЯЄТЬСЯ")
+                break
+            
+            print(f"\n✅ Цикл #{cycle_count} успішно завершено!")
+            
+            # Небольшая пауза между циклами
+            if not should_stop:
+                print("⏳ Підготовка до наступного циклу...")
+                time.sleep(1)
             
     except Exception as e:
         handle_error(str(e))
         return False
+    finally:
+        # Убираем обработчик горячей клавиши
+        keyboard.unhook_all()
+    
+    print("\n")
+    print("🏁 ПРОГРАМА ЗУПИНЕНА")
     
     return True
 
