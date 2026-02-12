@@ -67,8 +67,8 @@ def main_workflow():
     random_sleep()
     
     # КРОК 2: Копіювання тексту з позиції
-    copied_text = copy_text_from_coords(position[0], position[1])
-    if not copied_text:
+    copied_text_from_steep2 = copy_text_from_coords(position[0], position[1])
+    if not copied_text_from_steep2:
         return False
     
     # Рандомна затримка між кроками
@@ -102,7 +102,7 @@ def main_workflow():
     
     random_sleep()
 
-    # 1. Виділяємо та видаляємо текст з текстового поля
+    # КРОК 6: Виділяємо та видаляємо текст з текстового поля
     print("\n✂️ Виділяю та видаляю текст з текстового поля...")
     deleted_text = select_and_delete_from_position(position[0], position[1])
     
@@ -113,16 +113,26 @@ def main_workflow():
     print(f"✅ Текст успішно видалено: {deleted_text[:100]}..." if len(deleted_text) > 100 else f"✅ Текст успішно видалено: {deleted_text}")
     
     random_sleep()
+
+    # КРОК 7: Пошук та клік
+    base_settings.click_on = "right"
+    base_settings.click_offset = (3, 0) # на 3px правіше
     
-    # 2. Вставляємо текст з буфера обміну (текст з КРОК 2 вже в буфері)
+    position = find_and_click("12.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep()
+    
+    # КРОК 8
     print("\n📋 Вставляю текст з буфера обміну...")
-    if not paste_text():
+    if not paste_text(copied_text_from_steep2):
         print("❌ Не вдалося вставити текст")
         return False
     
     random_sleep()
     
-    # 3. Натискаємо Enter
+    # КРОК 9
     print("\n↵ Натискаю клавішу Enter...")
     pyautogui.press('enter')
     time.sleep(0.5)
@@ -130,6 +140,8 @@ def main_workflow():
     print("✅ Enter натиснуто успішно!")
     
     return True
+
+    
 
 def main():
     """Головна функція"""
