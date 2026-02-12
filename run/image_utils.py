@@ -50,6 +50,7 @@ def find_image(image_name, settings, images_folder="images"):
         
         while attempts < settings.max_attempts and (time.time() - start_time) < settings.search_timeout:
             attempts += 1
+            print(f"  Спроба {attempts}/{settings.max_attempts}...")
             
             screenshot = pyautogui.screenshot()
             screen = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
@@ -80,12 +81,14 @@ def find_image(image_name, settings, images_folder="images"):
                     best_match = click_point
             
             if best_match:
+                print(f"  ✅ Знайдено на спробі {attempts} з confidence={best_confidence:.3f}")
                 return best_match
             else:
                 if attempts < settings.max_attempts:
+                    print(f"  ⏳ Не знайдено, чекаю перед наступною спробою...")
                     random_sleep()
         
-        print(f"❌ Не вдалося знайти '{image_name}'")
+        print(f"❌ Не вдалося знайти '{image_name}' після {settings.max_attempts} спроб")
         return None
         
     except Exception as e:
