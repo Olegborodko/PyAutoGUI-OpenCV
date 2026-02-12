@@ -167,7 +167,7 @@ def main_workflow():
     if not position:
         return False
 
-    random_sleep(0.5, 1)
+    random_sleep(1, 1)
 
     # КРОК 12
     base_settings.click_on = "center"
@@ -183,7 +183,7 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep(0.5, 1)
+    random_sleep(1, 1)
 
     # КРОК 12
     base_settings.click_on = "center"
@@ -210,6 +210,20 @@ def main_workflow():
         return False
     
     random_sleep(1, 2)
+
+        # КРОК 18
+    position = find_and_click("18.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(1, 2)
+
+     # КРОК 19
+    position = find_and_click("19.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(1, 2)
     
     # КРОК 16
     position = find_and_click("15.png", base_settings)
@@ -224,21 +238,6 @@ def main_workflow():
         return False
     
     random_sleep(2, 2)
-
-    # КРОК 18
-    position = find_and_click("18.png", base_settings)
-    if not position:
-        return False
-    
-    random_sleep(1, 2)
-
-     # КРОК 19
-    position = find_and_click("19.png", base_settings)
-    if not position:
-        return False
-    
-    random_sleep(1, 2)
-
     
     return True
 
