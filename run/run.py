@@ -267,8 +267,16 @@ def main_workflow():
     if not copied_text_from_steep2:
         return False
     
+    # Перевірка на зупинку
+    if should_stop:
+        return False
+    
     # Рандомна затримка між кроками
     random_sleep(0.3, 1)
+    
+    # Перевірка на зупинку
+    if should_stop:
+        return False
     
     # КРОК 3: Пошук та клік по зображенню хром браузера
     base_settings.click_on = "center"
@@ -278,15 +286,31 @@ def main_workflow():
     if not position:
         return False
     
+    # Перевірка на зупинку
+    if should_stop:
+        return False
+    
     print("\n⏳ Затримка 3 секунд щоб відкрився браузер")
     time.sleep(3)
+    
+    # Перевірка на зупинку після довгої затримки
+    if should_stop:
+        return False
     
     # КРОК 4: Пошук та клік
     position = find_and_click("9.png", base_settings)
     if not position:
         return False
     
+    # Перевірка на зупинку
+    if should_stop:
+        return False
+    
     random_sleep(1, 2)
+    
+    # Перевірка на зупинку
+    if should_stop:
+        return False
     
     # КРОК 5: Пошук та клік з іншими налаштуваннями
     base_settings.click_on = "right"
@@ -296,7 +320,15 @@ def main_workflow():
     if not position:
         return False
     
+    # Перевірка на зупинку
+    if should_stop:
+        return False
+    
     random_sleep(0.3, 1)
+    
+    # Перевірка на зупинку
+    if should_stop:
+        return False
 
     # КРОК 6: Виділяємо та видаляємо текст з текстового поля
     print("\n✂️ Виділяю та видаляю текст з текстового поля...")
