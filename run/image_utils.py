@@ -95,7 +95,7 @@ def find_image(image_name, settings, images_folder="images"):
         print(f"❌ Помилка: {e}")
         return None
 
-def click_at_position(position, double_click=True):
+def click_at_position(position, double_click=False):
     try:
         x, y = position
         print(f"🖱️ Переміщую до ({x}, {y})")
