@@ -374,6 +374,15 @@ def main_workflow():
     print("\n↵ Натискаю клавішу Enter...")
     pyautogui.press('enter')
 
+    # КРОК 11
+    base_settings.click_on = "bottom"
+    base_settings.click_offset = (0, 10)
+    position = find_and_click("20.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(1)
+
      # КРОК 11
     base_settings.click_on = "bottom"
     base_settings.click_offset = (0, 10)
