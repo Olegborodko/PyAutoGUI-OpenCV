@@ -344,7 +344,7 @@ def main_workflow():
     
     random_sleep(1)
 
-    # КРОК 6: Виділяємо та видаляємо текст з текстового поля
+    # КРОК 12: Виділяємо та видаляємо текст з текстового поля
     print("\n✂️ Виділяю та видаляю текст з текстового поля...")
     text_deleted = select_and_delete_from_position(position[0], position[1])
     
@@ -354,7 +354,7 @@ def main_workflow():
     
     random_sleep(0.3, 1)
 
-    # КРОК 11
+    # КРОК 13
     base_settings.click_on = "bottom"
     base_settings.click_offset = (0, 3)
     position = find_and_click("13.png", base_settings)
@@ -363,18 +363,18 @@ def main_workflow():
     
     random_sleep(1)
 
-     # КРОК 8
+     # КРОК 14
     if not paste_text(copied_text_from_steep2):
         print("❌ Не вдалося вставити текст")
         return False
     
     random_sleep(0.5, 1)
 
-    # КРОК 14
+    # КРОК 15
     print("\n↵ Натискаю клавішу Enter...")
     pyautogui.press('enter')
 
-    # КРОК 11
+    # КРОК 16
     base_settings.click_on = "bottom"
     base_settings.click_offset = (0, 10)
     position = find_and_click("20.png", base_settings)
@@ -383,7 +383,7 @@ def main_workflow():
     
     random_sleep(1)
 
-     # КРОК 11
+     # КРОК 17
     base_settings.click_on = "bottom"
     base_settings.click_offset = (0, 10)
     position = find_and_click("20.png", base_settings)
@@ -392,62 +392,53 @@ def main_workflow():
     
     random_sleep(1)
 
-    # КРОК 12
+    # КРОК 18
     base_settings.click_on = "center"
     position = find_and_click("16.png", base_settings)
+    # Не зупиняємо виконання, якщо зображення не знайдено
     if not position:
-        return False
+        print("⚠️ Зображення '16.png' не знайдено, продовжую виконання...")
     
     random_sleep(1, 2)
 
-    # КРОК 12
+    # КРОК 19
     base_settings.click_on = "center"
     position = find_and_click("17.png", base_settings)
+    # Не зупиняємо виконання, якщо зображення не знайдено
     if not position:
-        return False
+        print("⚠️ Зображення '17.png' не знайдено, продовжую виконання...")
     
     random_sleep(0.5, 1)
 
-    # КРОК 13
-    if not paste_text(copied_text_from_steep2):
-        print("❌ Не вдалося вставити текст")
-        return False
-    
-    random_sleep(0.5, 1)
-
-    # КРОК 14
-    print("\n↵ Натискаю клавішу Enter...")
-    pyautogui.press('enter')
-
-    # КРОК 15
+    # КРОК 20
     position = find_and_click("14.png", base_settings)
     if not position:
         return False
     
     random_sleep(1, 2)
 
-        # КРОК 18
+    # КРОК 21
     position = find_and_click("18.png", base_settings)
     if not position:
         return False
     
     random_sleep(3, 3)
 
-     # КРОК 19
+    # КРОК 22
     position = find_and_click("19.png", base_settings)
     if not position:
         return False
     
     random_sleep(3, 3)
     
-    # КРОК 16
+    # КРОК 23
     position = find_and_click("15.png", base_settings)
     if not position:
         return False
     
     random_sleep(3, 5)
 
-    # КРОК 17
+    # КРОК 24
     position = find_and_click("2.png", base_settings)
     if not position:
         return False
