@@ -233,6 +233,8 @@ def copy_text_from_coords(x, y):
         return None
 
 def main_workflow():
+    global should_stop
+    
     # Базові налаштування пошуку зображення
     # center, top, bottom, left, right, ...
     base_settings = SearchSettings(
@@ -251,6 +253,10 @@ def main_workflow():
     base_settings.click_offset = (0, 3) # на 3px нижче
     position = find_and_click("1.png", base_settings)
     if not position:
+        return False
+    
+    # Перевірка на зупинку
+    if should_stop:
         return False
     
     # Рандомна затримка між кроками
@@ -453,11 +459,11 @@ def main():
     
     print("\n" + "=" * 60)
     print("🚀 ПРОГРАМА ЗАПУЩЕНА")
-    print("📌 Для зупинки натисніть F8")
+    print("📌 Для зупинки натисніть Ctrl+F8")
     print("=" * 60)
     
-    # Регистрируем горячую клавишу для остановки
-    keyboard.add_hotkey('F8', stop_program)
+    # Регистрируем горячую клавишу для остановки (Ctrl+F8 более надежно)
+    keyboard.add_hotkey('ctrl+F8', stop_program)
     
     cycle_count = 0
     
