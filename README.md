@@ -18,13 +18,27 @@ PyAutoGUI + OpenCV бот для автоматизации задач.
 
 4. Установите зависимости:
    ```bash
-   pip install pyautogui opencv-python pillow numpy keyboard pyperclip pytesseract
+   pip install pyautogui opencv-python pillow numpy keyboard pyperclip pytesseract pywin32 uiautomation
    ```
 
 5. Проверьте установку:
    ```bash
-   python -c "import pyautogui; import cv2; import PIL; import numpy; import keyboard; import pyperclip; import pytesseract; print('Все библиотеки загружены успешно!')"
+   python -c "import pyautogui; import cv2; import PIL; import numpy; import keyboard; import pyperclip; import pytesseract; import win32com.client; import uiautomation; print('Все библиотеки загружены успешно!')"
    ```
+
+### Описание библиотек
+
+- **pyautogui** - автоматизация управления мышью и клавиатурой
+- **opencv-python** (cv2) - компьютерное зрение для поиска изображений на экране
+- **pillow** (PIL) - работа с изображениями, захват скриншотов
+- **numpy** - математические операции для обработки изображений
+- **keyboard** - обработка горячих клавиш для остановки программы
+- **pyperclip** - работа с буфером обмена для копирования/вставки текста
+- **pytesseract** - оптическое распознавание текста (OCR)
+- **pywin32** (win32com) - работа с Windows API для SendKeys
+- **uiautomation** - автоматизация через UI Automation API
+
+
 
 ## Скачайте и установите git на компьютер
 

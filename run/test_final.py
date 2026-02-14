@@ -56,6 +56,8 @@ def find_and_click_test_image():
         search_timeout=10.0
     )
     
+    settings.click_on = "bottom"
+    settings.click_offset = (0, 3)
     position = find_image("test.png", settings)
     
     if not position:
