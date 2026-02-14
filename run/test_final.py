@@ -222,37 +222,95 @@ def test_uia_get_text(x, y):
     print("\n🧪 Тест: UIA отримання тексту")
     
     try:
+        # Очищаємо буфер обміну перед тестом UIA
+        print("🧹 Очищаю буфер обміну перед тестом UIA...")
+        clear_clipboard()
+        
         # Отримання елемента за координатами
+        print(f"🔍 Отримую елемент за координатами ({x}, {y})...")
         control = auto.ControlFromPoint(x, y)
+        
+        if not control:
+            print("❌ Не вдалося отримати елемент за координатами")
+            return None
         
         # Спроба отримати текст різними способами
         text = None
         
-        # Спосіб 1: GetValuePattern
+        # Спосіб 1: GetValuePattern (для текстових полів)
         try:
+            print("   Спробую GetValuePattern...")
             value_pattern = control.GetValuePattern()
             if value_pattern:
                 text = value_pattern.Value
-        except:
-            pass
+                if text and text.strip():
+                    print(f"   ✅ GetValuePattern: '{text[:50]}...'")
+                else:
+                    print("   ❌ GetValuePattern повернув порожній текст")
+        except Exception as e:
+            print(f"   ⚠️ GetValuePattern помилка: {e}")
         
         # Спосіб 2: LegacyValue
-        if not text:
+        if not text or not text.strip():
             try:
+                print("   Спробую LegacyValue...")
                 text = control.LegacyValue
-            except:
-                pass
+                if text and text.strip():
+                    print(f"   ✅ LegacyValue: '{text[:50]}...'")
+                else:
+                    print("   ❌ LegacyValue повернув порожній текст")
+            except Exception as e:
+                print(f"   ⚠️ LegacyValue помилка: {e}")
         
         # Спосіб 3: Name property
-        if not text:
+        if not text or not text.strip():
             try:
+                print("   Спробую Name property...")
                 text = control.Name
-            except:
-                pass
+                if text and text.strip():
+                    print(f"   ✅ Name: '{text[:50]}...'")
+                else:
+                    print("   ❌ Name повернув порожній текст")
+            except Exception as e:
+                print(f"   ⚠️ Name помилка: {e}")
+        
+        # Спосіб 4: Додаткові методи для текстових елементів
+        if not text or not text.strip():
+            try:
+                print("   Спробую додаткові методи...")
+                # Спроба отримати текст через DocumentPattern
+                if hasattr(control, 'GetTextPattern'):
+                    text_pattern = control.GetTextPattern()
+                    if text_pattern:
+                        text_range = text_pattern.DocumentRange
+                        if text_range:
+                            text = text_range.GetText(-1)
+                            if text and text.strip():
+                                print(f"   ✅ TextPattern: '{text[:50]}...'")
+            except Exception as e:
+                print(f"   ⚠️ Додаткові методи помилка: {e}")
+        
+        # Спосіб 5: Пошук дочірніх елементів з текстом
+        if not text or not text.strip():
+            try:
+                print("   Спробую пошук дочірніх елементів...")
+                # Шукаємо перший дочірній елемент з текстом
+                for child in control.GetChildren():
+                    try:
+                        child_text = child.Name
+                        if child_text and child_text.strip():
+                            text = child_text
+                            print(f"   ✅ Знайдено текст у дочірньому елементі: '{text[:50]}...'")
+                            break
+                    except:
+                        continue
+            except Exception as e:
+                print(f"   ⚠️ Пошук дочірніх елементів помилка: {e}")
         
         if text and text.strip():
+            text = text.strip()
             print(f"✅ UIA отримав текст: '{text[:50]}...'")
-            return text.strip()
+            return text
         else:
             print("❌ UIA не зміг отримати текст")
             return None

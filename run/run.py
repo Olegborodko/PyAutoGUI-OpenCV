@@ -3,12 +3,27 @@ import greatings
 import time
 import pyautogui
 import keyboard  # Для отслеживания горячих клавиш
+import pyperclip
 
 # Імпортуємо наші функції
 from image_utils import SearchSettings, find_image, click_at_position
 from text_utils import copy_text_from_position, select_and_delete_from_position, paste_text
 from random_utils import random_sleep
 from error_handler import handle_error
+from uia_method import test_uia_get_text
+
+# Спроба імпортувати альтернативні бібліотеки
+try:
+    import win32com.client
+    HAS_WIN32 = True
+except ImportError:
+    HAS_WIN32 = False
+
+try:
+    import uiautomation as auto
+    HAS_UIA = True
+except ImportError:
+    HAS_UIA = False
 
 # Глобальная переменная для контроля выполнения
 should_stop = False
@@ -36,60 +51,186 @@ def find_and_click(image_name, settings):
 
     return position
 
+def clear_clipboard():
+    """Очистити буфер обміну"""
+    try:
+        pyperclip.copy('')
+        time.sleep(0.3)  # Збільшена затримка
+        # Перевірити, що буфер справді очищений
+        if pyperclip.paste() == '':
+            return True
+        else:
+            # Спроба ще раз з більшою затримкою
+            pyperclip.copy('')
+            time.sleep(0.5)
+            return pyperclip.paste() == ''
+    except Exception as e:
+        print(f"⚠️ Помилка очищення буфера: {e}")
+        return False
+
+def check_clipboard():
+    """Перевірити буфер обміну та повернути текст"""
+    time.sleep(0.2)
+    try:
+        text = pyperclip.paste()
+        if text and text.strip():
+            text = text.strip()
+            preview = text[:50] + "..." if len(text) > 50 else text
+            print(f"✅ Текст отримано: '{preview}'")
+            return text
+        else:
+            print("❌ Буфер обміну порожній")
+            return None
+    except Exception as e:
+        print(f"❌ Помилка буфера обміну: {e}")
+        return None
+
+def test_original_with_esc(x, y):
+    """Метод 1: Оригінальний метод, який працював (з Esc)"""
+    print("\n🧪 Метод 1: Оригінальний метод (з Esc)")
+    
+    # Оригінальна логіка
+    pyautogui.click(button='right')
+    time.sleep(0.05)
+    pyautogui.press('esc')
+    time.sleep(0.05)
+    
+    # Подвійний клік
+    pyautogui.doubleClick()
+    time.sleep(0.2)
+    
+    # Копіювання
+    pyautogui.hotkey('ctrl', 'c')
+    time.sleep(0.3)
+    
+    # Перевірка
+    return check_clipboard()
+
+def test_triple_click_only(x, y):
+    """Метод 3: Тільки потрійний клік"""
+    print("\n🧪 Метод 3: Тільки потрійний клік")
+    
+    pyautogui.click(clicks=3, interval=0.1)
+    time.sleep(0.4)
+    pyautogui.hotkey('ctrl', 'c')
+    time.sleep(0.3)
+    
+    return check_clipboard()
+
+def test_ctrl_a_only(x, y):
+    """Метод 4: Тільки Ctrl+A"""
+    print("\n🧪 Метод 4: Тільки Ctrl+A")
+    
+    pyautogui.hotkey('ctrl', 'a')
+    time.sleep(0.4)
+    pyautogui.hotkey('ctrl', 'c')
+    time.sleep(0.3)
+    
+    return check_clipboard()
+
+def test_sendkeys_ctrl_a(x, y):
+    """Метод 8: SendKeys Ctrl+A"""
+    if not HAS_WIN32:
+        print("❌ Бібліотека win32com не встановлена")
+        return None
+    
+    print("\n🧪 Метод 8: SendKeys Ctrl+A")
+    
+    pyautogui.click()  # Фокус
+    time.sleep(0.3)
+    
+    # Використання SendKeys
+    shell = win32com.client.Dispatch("WScript.Shell")
+    shell.SendKeys("^a")  # Ctrl+A
+    time.sleep(0.3)
+    shell.SendKeys("^c")  # Ctrl+C
+    time.sleep(0.3)
+    
+    return check_clipboard()
+
+def test_sendkeys_select_all(x, y):
+    """Метод 9: SendKeys виділення"""
+    if not HAS_WIN32:
+        print("❌ Бібліотека win32com не встановлена")
+        return None
+    
+    print("\n🧪 Метод 9: SendKeys виділення")
+    
+    # Додаткова пауза після очищення буфера
+    time.sleep(0.5)
+    
+    pyautogui.click()  # Фокус
+    time.sleep(0.5)  # Збільшена затримка для фокусу
+    
+    shell = win32com.client.Dispatch("WScript.Shell")
+    # Виділення з початку до кінця
+    shell.SendKeys("{HOME}")
+    time.sleep(0.2)
+    shell.SendKeys("+{END}")  # Shift+End
+    time.sleep(0.5)
+    shell.SendKeys("^c")  # Ctrl+C
+    time.sleep(0.5)
+    
+    return check_clipboard()
+
 def copy_text_from_coords(x, y):
     """Копіювання тексту з позиції. Повертає текст або None"""
     print(f"\n📋 Копіюю текст з позиції ({x}, {y})...")
     
-    # Спроба 1: Використання покращеної функції з text_utils
-    copied_text = copy_text_from_position(x, y)
+    # Обов'язково очищуємо буфер обміну перед початком
+    print("🧹 Очищаю буфер обміну перед копіюванням...")
+    clear_clipboard()
     
-    if copied_text:
-        print(f"✅ Текст успішно скопійовано!")
-        print(f"📄 Зміст тексту: {copied_text[:100]}..." if len(copied_text) > 100 else f"📄 Зміст тексту: {copied_text}")
-        return copied_text
+    # Список методів для спроби (1, 3, 4, 8, 9, 10)
+    methods = [
+        ("Метод 1", test_original_with_esc),
+        ("Метод 3", test_triple_click_only),
+        ("Метод 4", test_ctrl_a_only),
+        ("Метод 8", test_sendkeys_ctrl_a),
+        ("Метод 9", test_sendkeys_select_all),
+        ("Метод 10", test_uia_get_text)
+    ]
     
-    print("⚠️ Перша спроба не вдалася, пробую альтернативні методи...")
+    copied_text_from_steep2 = None
     
-    # Спроба 2: Додатковий клік перед копіюванням
-    try:
-        print("   🔄 Спроба 2: Додатковий клік для фокусу...")
-        pyautogui.moveTo(x, y, duration=0.2)
-        time.sleep(0.3)
-        pyautogui.click()
-        time.sleep(0.5)  # Довша затримка для фокусу
+    # Переміщуємо курсор до позиції
+    pyautogui.moveTo(x, y, duration=0.2)
+    time.sleep(0.3)
+    
+    # Пробуємо кожен метод по черзі
+    for method_name, method_func in methods:
+        print(f"\n🔄 Пробую {method_name}...")
         
-        copied_text = copy_text_from_position(x, y)
-        if copied_text:
-            print(f"✅ Текст успішно скопійовано після додаткового кліку!")
-            print(f"📄 Зміст тексту: {copied_text[:100]}..." if len(copied_text) > 100 else f"📄 Зміст тексту: {copied_text}")
-            return copied_text
-    except Exception as e:
-        print(f"   ⚠️ Помилка при спробі 2: {e}")
+        # Очищаємо буфер перед кожним методом (крім UIA, який сам очищає)
+        if method_name != "Метод 10":
+            clear_clipboard()
+        
+        # Викликаємо метод
+        result = method_func(x, y)
+        
+        # Якщо метод повернув текст, зберігаємо його і припиняємо спроби
+        if result:
+            copied_text_from_steep2 = result
+            print(f"✅ {method_name} спрацював!")
+            print(f"📄 Зміст тексту: {copied_text_from_steep2[:100]}..." if len(copied_text_from_steep2) > 100 else f"📄 Зміст тексту: {copied_text_from_steep2}")
+            break
+        else:
+            print(f"❌ {method_name} не спрацював")
     
-    # Спроба 3: Використання альтернативних координат (трохи зміщених)
-    try:
-        print("   🔄 Спроба 3: Копіювання зі зміщених координат...")
-        for offset_x, offset_y in [(5, 0), (0, 5), (-5, 0), (0, -5), (10, 0)]:
-            new_x, new_y = x + offset_x, y + offset_y
-            print(f"      Спробую координати ({new_x}, {new_y})...")
-            
-            pyautogui.moveTo(new_x, new_y, duration=0.2)
-            time.sleep(0.2)
-            pyautogui.click()
-            time.sleep(0.3)
-            
-            copied_text = copy_text_from_position(new_x, new_y)
-            if copied_text:
-                print(f"✅ Текст успішно скопійовано зі зміщених координат!")
-                print(f"📄 Зміст тексту: {copied_text[:100]}..." if len(copied_text) > 100 else f"📄 Зміст тексту: {copied_text}")
-                return copied_text
-                
-            time.sleep(0.1)
-    except Exception as e:
-        print(f"   ⚠️ Помилка при спробі 3: {e}")
+    # Якщо жоден метод не спрацював, пробуємо оригінальну функцію
+    if not copied_text_from_steep2:
+        print("\n⚠️ Жоден з методів не спрацював, пробую оригінальну функцію...")
+        copied_text_from_steep2 = copy_text_from_position(x, y)
+        
+        if copied_text_from_steep2:
+            print(f"✅ Оригінальна функція спрацювала!")
+            print(f"📄 Зміст тексту: {copied_text_from_steep2[:100]}..." if len(copied_text_from_steep2) > 100 else f"📄 Зміст тексту: {copied_text_from_steep2}")
     
-    print("❌ Не вдалося скопіювати текст жодним методом.")
-    return None
+    if copied_text_from_steep2:
+        return copied_text_from_steep2
+    else:
+        print("❌ Не вдалося скопіювати текст жодним методом.")
+        return None
 
 def main_workflow():
     # Базові налаштування пошуку зображення
