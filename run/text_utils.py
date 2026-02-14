@@ -13,67 +13,108 @@ def random_sleep():
     time.sleep(random.uniform(0.1, 1.0))
 
 def select_and_copy_text():
+    """
+    Виділяє та копіює текст з поточної позиції курсора.
+    Використовує покращені методи з більш стабільними затримками
+    та без зайвих дій, які можуть збити фокус.
+    """
     try:
         print("📋 Виділяю та копіюю текст...")
         
         x, y = pyautogui.position()
         print(f"   Курсор: ({x}, {y})")
         
+        # Зберігаємо поточний вміст буфера обміну для відновлення
+        try:
+            original_clipboard = pyperclip.paste()
+        except:
+            original_clipboard = ""
+        
+        # Оптимізована послідовність методів - від найбезпечніших до агресивних
         methods = [
-            ("double_click", "Подвійний клік"),
-            ("triple_click", "Потрійний клік"),
-            ("ctrl_a", "Ctrl+A")
+            ("ctrl_a", "Ctrl+A", 0.3),           # Найбезпечніший для полів вводу
+            ("double_click", "Подвійний клік", 0.4),  # Для виділення слова
+            ("triple_click", "Потрійний клік", 0.5),  # Для виділення рядка
+            ("home_shift_end", "Home+Shift+End", 0.3), # Для виділення всього вмісту поля
         ]
         
-        for method_name, method_desc in methods:
+        for method_name, method_desc, base_delay in methods:
             print(f"   Спробую: {method_desc}")
             
-            try:
-                # Спершу очистимо буфер обміну
-                pyperclip.copy('')
+            for attempt in range(1, 4):  # 3 спроби для кожного методу
+                print(f"      Спроба {attempt}/3...")
                 
-                # Скинемо можливе контекстне меню
-                pyautogui.click(button='right')
-                time.sleep(0.05)  # Дуже коротка затримка для стабільності
-                pyautogui.press('esc')
-                time.sleep(0.05)  # Дуже коротка затримка для стабільності
-                
-                if method_name == "double_click":
-                    pyautogui.doubleClick()
-                elif method_name == "triple_click":
-                    pyautogui.click(clicks=3)
-                elif method_name == "ctrl_a":
-                    pyautogui.hotkey('ctrl', 'a')
-                
-                time.sleep(0.2)  # Збільшена затримка для виділення тексту
-                pyautogui.hotkey('ctrl', 'c')
-                time.sleep(0.3)  # Збільшена затримка для копіювання
-                
-                # Додаткова перевірка буферу обміну
-                time.sleep(0.1)
-                copied_text = pyperclip.paste()
-                
-                if copied_text:
-                    copied_text = copied_text.strip()
-                    if copied_text:
+                try:
+                    # Очищаємо буфер обміну перед кожною спробою
+                    pyperclip.copy('')
+                    time.sleep(0.1)
+                    
+                    # Виконуємо метод виділення
+                    if method_name == "ctrl_a":
+                        pyautogui.hotkey('ctrl', 'a')
+                    elif method_name == "double_click":
+                        pyautogui.doubleClick()
+                    elif method_name == "triple_click":
+                        pyautogui.click(clicks=3, interval=0.1)
+                    elif method_name == "home_shift_end":
+                        pyautogui.press('home')
+                        time.sleep(0.05)
+                        pyautogui.hotkey('shift', 'end')
+                    
+                    # Затримка для виділення тексту (збільшується з кожною спробою)
+                    delay = base_delay * attempt
+                    time.sleep(delay)
+                    
+                    # Копіюємо виділений текст
+                    pyautogui.hotkey('ctrl', 'c')
+                    time.sleep(0.2 * attempt)  # Затримка для копіювання
+                    
+                    # Перевіряємо буфер обміну
+                    time.sleep(0.1)
+                    copied_text = pyperclip.paste()
+                    
+                    if copied_text and copied_text.strip():
+                        copied_text = copied_text.strip()
                         preview = copied_text[:100] + "..." if len(copied_text) > 100 else copied_text
-                        print(f"   ✅ {method_desc} спрацював!")
-                        print(f"   📋 Текст: {preview}")
+                        print(f"      ✅ {method_desc} спрацював на спробі {attempt}!")
+                        print(f"      📋 Текст: {preview}")
+                        
+                        # Відновлюємо оригінальний буфер обміну
+                        try:
+                            pyperclip.copy(original_clipboard)
+                        except:
+                            pass
+                            
                         return copied_text
                     else:
-                        print(f"   ❌ {method_desc} не спрацював (текст порожній)")
-                else:
-                    print(f"   ❌ {method_desc} не спрацював (буфер порожній)")
-                    
-            except Exception as e:
-                print(f"   ⚠️ Помилка: {e}")
-                continue
+                        print(f"      ❌ Буфер порожній, пробую знову...")
+                        
+                except Exception as e:
+                    print(f"      ⚠️ Помилка при спробі {attempt}: {e}")
+                    time.sleep(0.2 * attempt)
+                    continue
+            
+            print(f"   ❌ {method_desc} не спрацював після 3 спроб")
         
         print("❌ Жоден метод не спрацював")
+        
+        # Відновлюємо оригінальний буфер обміну
+        try:
+            pyperclip.copy(original_clipboard)
+        except:
+            pass
+            
         return None
             
     except Exception as e:
-        print(f"❌ Помилка: {e}")
+        print(f"❌ Загальна помилка: {e}")
+        
+        # Відновлюємо оригінальний буфер обміну
+        try:
+            pyperclip.copy(original_clipboard)
+        except:
+            pass
+            
         return None
 
 def copy_text_from_position(x, y):
@@ -89,54 +130,67 @@ def copy_text_from_position(x, y):
         return None
 
 def select_and_delete_text():
-    """Виділяє та видаляє текст (вирізає). Повертає True у разі успіху"""
+    """Виділяє та видаляє текст. Повертає True у разі успіху"""
     try:
         print("✂️ Виділяю та видаляю текст...")
         
         x, y = pyautogui.position()
         print(f"   Курсор: ({x}, {y})")
         
+        # Оптимізована послідовність методів - без зайвих дій
         methods = [
-            ("double_click", "Подвійний клік"),
-            ("triple_click", "Потрійний клік"),
-            ("ctrl_a", "Ctrl+A")
+            ("ctrl_a", "Ctrl+A", 0.2),           # Найбезпечніший
+            ("home_shift_end", "Home+Shift+End", 0.2), # Для полів вводу
+            ("double_click", "Подвійний клік", 0.3),  # Для виділення слова
+            ("triple_click", "Потрійний клік", 0.4),  # Для виділення рядка
         ]
         
-        for method_name, method_desc in methods:
+        for method_name, method_desc, base_delay in methods:
             print(f"   Спробую: {method_desc}")
             
-            try:
-                # Скинемо можливе контекстне меню
-                pyautogui.click(button='right')
-                time.sleep(0.05)
-                pyautogui.press('esc')
-                time.sleep(0.05)
+            for attempt in range(1, 3):  # 2 спроби для кожного методу
+                print(f"      Спроба {attempt}/2...")
                 
-                if method_name == "double_click":
-                    pyautogui.doubleClick()
-                elif method_name == "triple_click":
-                    pyautogui.click(clicks=3)
-                elif method_name == "ctrl_a":
-                    pyautogui.hotkey('ctrl', 'a')
-                
-                time.sleep(0.1)  # Коротка затримка для виділення тексту
-                
-                # Видаляємо виділений текст (Delete)
-                pyautogui.press('delete')
-                time.sleep(0.1)
-                
-                print(f"   ✅ {method_desc} спрацював! Текст видалено.")
-                return True
+                try:
+                    # Виконуємо метод виділення
+                    if method_name == "ctrl_a":
+                        pyautogui.hotkey('ctrl', 'a')
+                    elif method_name == "home_shift_end":
+                        pyautogui.press('home')
+                        time.sleep(0.05)
+                        pyautogui.hotkey('shift', 'end')
+                    elif method_name == "double_click":
+                        pyautogui.doubleClick()
+                    elif method_name == "triple_click":
+                        pyautogui.click(clicks=3, interval=0.1)
                     
-            except Exception as e:
-                print(f"   ⚠️ Помилка: {e}")
-                continue
+                    # Затримка для виділення тексту
+                    delay = base_delay * attempt
+                    time.sleep(delay)
+                    
+                    # Видаляємо виділений текст
+                    pyautogui.press('delete')
+                    time.sleep(0.1 * attempt)
+                    
+                    # Додатково натискаємо Backspace для повного очищення
+                    pyautogui.press('backspace')
+                    time.sleep(0.05)
+                    
+                    print(f"      ✅ {method_desc} спрацював на спробі {attempt}!")
+                    return True
+                        
+                except Exception as e:
+                    print(f"      ⚠️ Помилка при спробі {attempt}: {e}")
+                    time.sleep(0.2 * attempt)
+                    continue
+            
+            print(f"   ❌ {method_desc} не спрацював після 2 спроб")
         
         print("❌ Жоден метод не спрацював")
         return False
             
     except Exception as e:
-        print(f"❌ Помилка: {e}")
+        print(f"❌ Загальна помилка: {e}")
         return False
 
 def paste_text(text_to_paste):
