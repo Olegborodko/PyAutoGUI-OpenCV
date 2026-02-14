@@ -415,7 +415,7 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep(1, 2)
+    random_sleep(2, 2)
 
     # КРОК 21
     position = find_and_click("18.png", base_settings)
@@ -453,11 +453,11 @@ def main():
     
     print("\n" + "=" * 60)
     print("🚀 ПРОГРАМА ЗАПУЩЕНА")
-    print("📌 Для зупинки натисніть Ctrl+Shift+Q")
+    print("📌 Для зупинки натисніть F8")
     print("=" * 60)
     
     # Регистрируем горячую клавишу для остановки
-    keyboard.add_hotkey('ctrl+shift+q', stop_program)
+    keyboard.add_hotkey('F8', stop_program)
     
     cycle_count = 0
     
