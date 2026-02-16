@@ -20,6 +20,14 @@ from random_utils import random_sleep
 from error_handler import handle_error
 from uia_method import test_uia_get_text
 
+# Імпортуємо RDP-фікс для буфера обміну
+try:
+    from rdp_clipboard_fix import copy_text_from_coords_rdp, wait_for_clipboard_change
+    HAS_RDP_FIX = True
+except ImportError:
+    HAS_RDP_FIX = False
+    print("⚠️ Файл rdp_clipboard_fix.py не знайдено. Буде використано стандартні методи.")
+
 # Спроба імпортувати альтернативні бібліотеки
 try:
     import win32com.client
@@ -265,6 +273,17 @@ def test_sendkeys_select_all(x, y):
 def copy_text_from_coords(x, y):
     """Копіювання тексту з позиції. Повертає текст або None"""
     print(f"\n📋 Копіюю текст з позиції ({x}, {y})...")
+    
+    # Спроба використання RDP-фіксу, якщо він доступний
+    if HAS_RDP_FIX:
+        print("🔧 Використовую RDP-оптимізований метод копіювання...")
+        result = copy_text_from_coords_rdp(x, y)
+        if result:
+            print(f"✅ RDP-метод спрацював!")
+            print(f"📄 Зміст тексту: {result[:100]}..." if len(result) > 100 else f"📄 Зміст тексту: {result}")
+            return result
+        else:
+            print("⚠️ RDP-метод не спрацював, пробую стандартні методи...")
     
     # Обов'язково очищуємо буфер обміну перед початком
     print("🧹 Очищаю буфер обміну перед копіюванням...")
