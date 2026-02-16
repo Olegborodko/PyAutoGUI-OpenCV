@@ -5,6 +5,14 @@ import pyautogui
 import keyboard  # Для отслеживания горячих клавиш
 import pyperclip
 
+# Спроба імпортувати win32clipboard для роботи з буфером обміну
+try:
+    import win32clipboard
+    HAS_WIN32CLIPBOARD = True
+except ImportError:
+    HAS_WIN32CLIPBOARD = False
+    print("⚠️ Бібліотека win32clipboard не встановлена. Буде використано pyperclip.")
+
 # Імпортуємо наші функції
 from image_utils import SearchSettings, find_image, click_at_position
 from text_utils import copy_text_from_position, select_and_delete_from_position, paste_text
@@ -52,31 +60,112 @@ def find_and_click(image_name, settings):
     return position
 
 def clear_clipboard():
-    """Очистити буфер обміну"""
+    """Очистити буфер обміну (покращена версія для RDP)"""
     try:
+        # Спроба 1: Використання win32clipboard для кращої очистки
+        if HAS_WIN32CLIPBOARD:
+            try:
+                win32clipboard.OpenClipboard()
+                win32clipboard.EmptyClipboard()
+                win32clipboard.CloseClipboard()
+                time.sleep(0.3)  # Затримка для RDP
+                return True
+            except Exception as e:
+                print(f"⚠️ Помилка очищення буфера через win32clipboard: {e}")
+                # Продовжуємо з pyperclip
+        
+        # Спроба 2: Використання pyperclip (резервний варіант)
         pyperclip.copy('')
-        time.sleep(0.3)  # Збільшена затримка
+        time.sleep(0.4)  # Збільшена затримка для RDP
         # Перевірити, що буфер справді очищений
         if pyperclip.paste() == '':
             return True
         else:
             # Спроба ще раз з більшою затримкою
             pyperclip.copy('')
-            time.sleep(0.5)
+            time.sleep(0.6)  # Ще більша затримка для RDP
             return pyperclip.paste() == ''
     except Exception as e:
         print(f"⚠️ Помилка очищення буфера: {e}")
         return False
 
 def check_clipboard():
-    """Перевірити буфер обміну та повернути текст"""
-    time.sleep(0.2)
+    """Перевірити буфер обміну та повернути текст (покращена версія для RDP)"""
+    time.sleep(0.3)  # Збільшена затримка для RDP
+    
+    # Спроба 1: Використання win32clipboard (найкращий варіант для RDP)
+    if HAS_WIN32CLIPBOARD:
+        try:
+            win32clipboard.OpenClipboard()
+            
+            # Спроба отримати текст у форматі Unicode (CF_UNICODETEXT = 13)
+            if win32clipboard.IsClipboardFormatAvailable(win32clipboard.CF_UNICODETEXT):
+                try:
+                    text = win32clipboard.GetClipboardData(win32clipboard.CF_UNICODETEXT)
+                    if text and text.strip():
+                        text = text.strip()
+                        preview = text[:50] + "..." if len(text) > 50 else text
+                        print(f"✅ Текст отримано (Unicode): '{preview}'")
+                        win32clipboard.CloseClipboard()
+                        return text
+                except Exception as e:
+                    print(f"⚠️ Помилка читання Unicode формату: {e}")
+            
+            # Спроба отримати текст у форматі ANSI (CF_TEXT = 1)
+            if win32clipboard.IsClipboardFormatAvailable(win32clipboard.CF_TEXT):
+                try:
+                    text = win32clipboard.GetClipboardData(win32clipboard.CF_TEXT)
+                    if text and text.strip():
+                        # Конвертуємо bytes в str якщо потрібно
+                        if isinstance(text, bytes):
+                            try:
+                                text = text.decode('utf-8')
+                            except:
+                                text = text.decode('cp1251', errors='ignore')
+                        
+                        text = text.strip()
+                        preview = text[:50] + "..." if len(text) > 50 else text
+                        print(f"✅ Текст отримано (ANSI): '{preview}'")
+                        win32clipboard.CloseClipboard()
+                        return text
+                except Exception as e:
+                    print(f"⚠️ Помилка читання ANSI формату: {e}")
+            
+            # Спроба отримати текст у форматі OEM (CF_OEMTEXT = 7)
+            if win32clipboard.IsClipboardFormatAvailable(win32clipboard.CF_OEMTEXT):
+                try:
+                    text = win32clipboard.GetClipboardData(win32clipboard.CF_OEMTEXT)
+                    if text and text.strip():
+                        if isinstance(text, bytes):
+                            try:
+                                text = text.decode('cp866')
+                            except:
+                                text = text.decode('cp1251', errors='ignore')
+                        
+                        text = text.strip()
+                        preview = text[:50] + "..." if len(text) > 50 else text
+                        print(f"✅ Текст отримано (OEM): '{preview}'")
+                        win32clipboard.CloseClipboard()
+                        return text
+                except Exception as e:
+                    print(f"⚠️ Помилка читання OEM формату: {e}")
+            
+            win32clipboard.CloseClipboard()
+            
+        except Exception as e:
+            print(f"⚠️ Помилка роботи з win32clipboard: {e}")
+            try:
+                win32clipboard.CloseClipboard()
+            except:
+                pass
+    
+    # Спроба 2: Використання pyperclip (резервний варіант)
     try:
         text = pyperclip.paste()
         if text and text.strip():
             text = text.strip()
             preview = text[:50] + "..." if len(text) > 50 else text
-            print(f"✅ Текст отримано: '{preview}'")
+            print(f"✅ Текст отримано (pyperclip): '{preview}'")
             return text
         else:
             print("❌ Буфер обміну порожній")
@@ -99,9 +188,9 @@ def test_original_with_esc(x, y):
     pyautogui.doubleClick()
     time.sleep(0.2)
     
-    # Копіювання
+    # Копіювання (збільшена затримка для RDP)
     pyautogui.hotkey('ctrl', 'c')
-    time.sleep(0.3)
+    time.sleep(0.5)  # Збільшено з 0.3 до 0.5 для RDP
     
     # Перевірка
     return check_clipboard()
@@ -113,7 +202,7 @@ def test_triple_click_only(x, y):
     pyautogui.click(clicks=3, interval=0.1)
     time.sleep(0.4)
     pyautogui.hotkey('ctrl', 'c')
-    time.sleep(0.3)
+    time.sleep(0.5)  # Збільшено з 0.3 до 0.5 для RDP
     
     return check_clipboard()
 
@@ -124,7 +213,7 @@ def test_ctrl_a_only(x, y):
     pyautogui.hotkey('ctrl', 'a')
     time.sleep(0.4)
     pyautogui.hotkey('ctrl', 'c')
-    time.sleep(0.3)
+    time.sleep(0.5)  # Збільшено з 0.3 до 0.5 для RDP
     
     return check_clipboard()
 
