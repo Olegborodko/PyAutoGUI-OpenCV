@@ -19,6 +19,7 @@ from text_utils import copy_text_from_position, select_and_delete_from_position,
 from random_utils import random_sleep
 from error_handler import handle_error
 from uia_method import test_uia_get_text
+from key_utils import release_all_keys, ensure_focus_and_wait, safe_hotkey, stable_copy_text, wait_for_overlay_disappearance
 
 # Імпортуємо RDP-фікс для буфера обміну
 try:
@@ -274,71 +275,35 @@ def copy_text_from_coords(x, y):
     """Копіювання тексту з позиції. Повертає текст або None"""
     print(f"\n📋 Копіюю текст з позиції ({x}, {y})...")
     
-    # Спроба використання RDP-фіксу, якщо він доступний
+    # ОСНОВНОЙ МЕТОД: стабильное копирование с освобождением клавиш
+    print("🔧 Використовую стабильний метод копіювання для RDP...")
+    result = stable_copy_text(x, y)
+    
+    if result:
+        print(f"✅ Стабильний метод спрацював!")
+        print(f"📄 Зміст тексту: {result[:100]}..." if len(result) > 100 else f"📄 Зміст тексту: {result}")
+        return result
+    
+    # РЕЗЕРВНЫЙ МЕТОД: если стабильный не сработал, пробуем RDP-фикс
     if HAS_RDP_FIX:
-        print("🔧 Використовую RDP-оптимізований метод копіювання...")
+        print("🔧 Пробую RDP-оптимізований метод копіювання...")
         result = copy_text_from_coords_rdp(x, y)
         if result:
             print(f"✅ RDP-метод спрацював!")
             print(f"📄 Зміст тексту: {result[:100]}..." if len(result) > 100 else f"📄 Зміст тексту: {result}")
             return result
-        else:
-            print("⚠️ RDP-метод не спрацював, пробую стандартні методи...")
     
-    # Обов'язково очищуємо буфер обміну перед початком
-    print("🧹 Очищаю буфер обміну перед копіюванням...")
-    clear_clipboard()
+    # ЕЩЕ ОДИН РЕЗЕРВ: оригинальная функция из text_utils.py
+    print("🔧 Пробую оригінальну функцію копіювання...")
+    result = copy_text_from_position(x, y)
     
-    # Список методів для спроби (1, 3, 4, 8, 9, 10)
-    methods = [
-        ("Метод 1", test_original_with_esc),
-        ("Метод 3", test_triple_click_only),
-        ("Метод 4", test_ctrl_a_only),
-        ("Метод 8", test_sendkeys_ctrl_a),
-        ("Метод 9", test_sendkeys_select_all),
-        ("Метод 10", test_uia_get_text)
-    ]
+    if result:
+        print(f"✅ Оригінальна функція спрацювала!")
+        print(f"📄 Зміст тексту: {result[:100]}..." if len(result) > 100 else f"📄 Зміст тексту: {result}")
+        return result
     
-    copied_text_from_steep2 = None
-    
-    # Переміщуємо курсор до позиції
-    pyautogui.moveTo(x, y, duration=0.2)
-    time.sleep(0.3)
-    
-    # Пробуємо кожен метод по черзі
-    for method_name, method_func in methods:
-        print(f"\n🔄 Пробую {method_name}...")
-        
-        # Очищаємо буфер перед кожним методом (крім UIA, який сам очищає)
-        if method_name != "Метод 10":
-            clear_clipboard()
-        
-        # Викликаємо метод
-        result = method_func(x, y)
-        
-        # Якщо метод повернув текст, зберігаємо його і припиняємо спроби
-        if result:
-            copied_text_from_steep2 = result
-            print(f"✅ {method_name} спрацював!")
-            print(f"📄 Зміст тексту: {copied_text_from_steep2[:100]}..." if len(copied_text_from_steep2) > 100 else f"📄 Зміст тексту: {copied_text_from_steep2}")
-            break
-        else:
-            print(f"❌ {method_name} не спрацював")
-    
-    # Якщо жоден метод не спрацював, пробуємо оригінальну функцію
-    if not copied_text_from_steep2:
-        print("\n⚠️ Жоден з методів не спрацював, пробую оригінальну функцію...")
-        copied_text_from_steep2 = copy_text_from_position(x, y)
-        
-        if copied_text_from_steep2:
-            print(f"✅ Оригінальна функція спрацювала!")
-            print(f"📄 Зміст тексту: {copied_text_from_steep2[:100]}..." if len(copied_text_from_steep2) > 100 else f"📄 Зміст тексту: {copied_text_from_steep2}")
-    
-    if copied_text_from_steep2:
-        return copied_text_from_steep2
-    else:
-        print("❌ Не вдалося скопіювати текст жодним методом.")
-        return None
+    print("❌ Не вдалося скопіювати текст жодним методом.")
+    return None
 
 def main_workflow():
     global should_stop
