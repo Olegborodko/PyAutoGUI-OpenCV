@@ -69,12 +69,19 @@ def copy_text_from_coords_rdp(x, y):
     snapshot = _read_clipboard_raw() or ""
     print(f"   Поточний буфер: '{snapshot[:40]}...'" if len(snapshot) > 40 else f"   Поточний буфер: '{snapshot}'")
 
+    # Импортируем функцию освобождения клавиш
+    from key_utils import release_all_keys
+    
+    # Освобождаем клавиши перед началом
+    release_all_keys()
+    time.sleep(0.3)
+    
     methods = [
         ("triple_click",     _do_triple_click),
         ("ctrl_a",           _do_ctrl_a),
         ("home_shift_end",   _do_home_shift_end),
-        ("right_esc_double", _do_right_esc_double),
         ("ctrl_shift_end",   _do_ctrl_shift_end),
+        # Убрали right_esc_double - он создает overlay
     ]
 
     for name, action in methods:

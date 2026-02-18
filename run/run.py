@@ -19,6 +19,7 @@ from text_utils import copy_text_from_position, select_and_delete_from_position,
 from random_utils import random_sleep
 from error_handler import handle_error
 from uia_method import test_uia_get_text
+from key_utils import release_all_keys, ensure_focus_and_wait, safe_hotkey, stable_copy_text, wait_for_overlay_disappearance, disable_problematic_methods
 
 # Імпортуємо RDP-фікс для буфера обміну
 try:
@@ -274,36 +275,58 @@ def copy_text_from_coords(x, y):
     """Копіювання тексту з позиції. Повертає текст або None"""
     print(f"\n📋 Копіюю текст з позиції ({x}, {y})...")
     
-    # Спроба використання RDP-фіксу, якщо він доступний
+    # КРИТИЧНО: Освобождаем все клавиши перед началом копирования
+    release_all_keys()
+    time.sleep(0.3)
+    
+    # Ожидаем исчезновения overlay
+    wait_for_overlay_disappearance(timeout=1.0)
+    
+    # Сначала пробуем самый стабильный метод для RDP
+    print("🔧 Пробую стабильный метод копирования для RDP...")
+    result = stable_copy_text(x, y)
+    
+    if result:
+        print(f"✅ Стабильный метод спрацював!")
+        print(f"📄 Зміст тексту: {result[:100]}..." if len(result) > 100 else f"📄 Зміст тексту: {result}")
+        return result
+    
+    # Если стабильный метод не сработал, пробуем RDP-фикс
     if HAS_RDP_FIX:
-        print("🔧 Використовую RDP-оптимізований метод копіювання...")
+        print("🔧 Пробую RDP-оптимізований метод копіювання...")
         result = copy_text_from_coords_rdp(x, y)
         if result:
             print(f"✅ RDP-метод спрацював!")
             print(f"📄 Зміст тексту: {result[:100]}..." if len(result) > 100 else f"📄 Зміст тексту: {result}")
             return result
-        else:
-            print("⚠️ RDP-метод не спрацював, пробую стандартні методи...")
     
     # Обов'язково очищуємо буфер обміну перед початком
     print("🧹 Очищаю буфер обміну перед копіюванням...")
     clear_clipboard()
     
-    # Список методів для спроби (1, 3, 4, 8, 9, 10)
+    # Убираем проблемные методы из списка
+    problematic_methods = disable_problematic_methods()
+    
+    # Список безопасных методов для спроби (без проблемных)
     methods = [
-        ("Метод 1", test_original_with_esc),
         ("Метод 3", test_triple_click_only),
         ("Метод 4", test_ctrl_a_only),
-        ("Метод 8", test_sendkeys_ctrl_a),
-        ("Метод 9", test_sendkeys_select_all),
         ("Метод 10", test_uia_get_text)
     ]
+    
+    # Добавляем только если доступны (без SendKeys)
+    if HAS_WIN32:
+        # Не добавляем проблемные методы 8 и 9
+        pass
     
     copied_text_from_steep2 = None
     
     # Переміщуємо курсор до позиції
     pyautogui.moveTo(x, y, duration=0.2)
     time.sleep(0.3)
+    
+    # Освобождаем клавиши перед каждым методом
+    release_all_keys()
     
     # Пробуємо кожен метод по черзі
     for method_name, method_func in methods:
@@ -313,8 +336,15 @@ def copy_text_from_coords(x, y):
         if method_name != "Метод 10":
             clear_clipboard()
         
+        # Освобождаем клавиши перед методом
+        release_all_keys()
+        time.sleep(0.2)
+        
         # Викликаємо метод
         result = method_func(x, y)
+        
+        # Освобождаем клавиши после метода
+        release_all_keys()
         
         # Якщо метод повернув текст, зберігаємо його і припиняємо спроби
         if result:
@@ -328,11 +358,19 @@ def copy_text_from_coords(x, y):
     # Якщо жоден метод не спрацював, пробуємо оригінальну функцію
     if not copied_text_from_steep2:
         print("\n⚠️ Жоден з методів не спрацював, пробую оригінальну функцію...")
+        
+        # Освобождаем клавиши перед оригинальной функцией
+        release_all_keys()
+        time.sleep(0.3)
+        
         copied_text_from_steep2 = copy_text_from_position(x, y)
         
         if copied_text_from_steep2:
             print(f"✅ Оригінальна функція спрацювала!")
             print(f"📄 Зміст тексту: {copied_text_from_steep2[:100]}..." if len(copied_text_from_steep2) > 100 else f"📄 Зміст тексту: {copied_text_from_steep2}")
+    
+    # Освобождаем клавиши после всего процесса
+    release_all_keys()
     
     if copied_text_from_steep2:
         return copied_text_from_steep2

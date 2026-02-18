@@ -47,6 +47,17 @@ def test_uia_get_text(x, y):
     print("\n🧪 Метод 10: UIA отримання тексту (покращена версія)")
     
     try:
+        # Импортируем функцию освобождения клавиш
+        from key_utils import release_all_keys, wait_for_overlay_disappearance
+        
+        # КРИТИЧНО: Освобождаем клавиши перед UIA
+        print("🔓 Освобождаю клавиши перед UIA...")
+        release_all_keys()
+        time.sleep(0.3)
+        
+        # Ожидаем исчезновения overlay
+        wait_for_overlay_disappearance(timeout=1.0)
+        
         # Очищаємо буфер обміну перед тестом UIA
         print("🧹 Очищаю буфер обміну перед тестом UIA...")
         clear_clipboard()
