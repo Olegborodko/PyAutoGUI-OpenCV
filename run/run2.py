@@ -1,7 +1,12 @@
 # Імпортуємо привітання
 import greatings
 import time
+import pyautogui
 import keyboard  # Для отслеживания горячих клавиш
+
+# Імпортуємо наші функції
+from image_utils import SearchSettings, find_image, click_at_position
+from random_utils import random_sleep
 
 # Глобальная переменная для контроля выполнения
 should_stop = False
@@ -12,12 +17,45 @@ def stop_program():
     should_stop = True
     print("\n🛑 Сигнал остановки получен! Завершаю текущий цикл...")
 
+def find_and_click(image_name, settings):
+    """Пошук зображення та клік по ньому. Повертає позицію або False"""
+    print(f"\n🔍 Шукаю зображення '{image_name}'...")
+    position = find_image(image_name, settings)
+    
+    if not position:
+        print(f"❌ Не вдалося знайти зображення '{image_name}'.")
+        return False
+    
+    print(f"✅ Зображення знайдено за координатами: {position}")
+    
+    if not click_at_position(position):
+        print(f"❌ Не вдалося виконати клік для '{image_name}'.")
+        return False
+
+    return position
+
 def main_workflow():
     """Основной рабочий процесс (пока пустой - будут добавляться шаги)"""
     global should_stop
     
-    # Сюда будут добавляться шаги КРОК 1, КРОК 2 и т.д.
-    print("\n🔄 Виконую робочий процес...")
+    # Базові налаштування пошуку зображення
+    base_settings = SearchSettings(
+        confidence=0.7,
+        grayscale=False,
+        blur=0,
+        scales=[0.9, 1.0, 1.1],
+        click_on="center",
+        click_offset=(0, 0),
+        max_attempts=3,
+        search_timeout=10.0
+    )
+    
+    # КРОК 1: Пошук та клік
+    position = find_and_click("18.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(0.5, 3)
     
     # Заглушка - пока просто ожидание
     time.sleep(1)
