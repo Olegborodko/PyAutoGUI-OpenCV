@@ -96,11 +96,64 @@ def find_image(image_name, settings, images_folder="images"):
         return None
 
 def click_at_position(position, double_click=False):
+    """
+    Клік по позиції з человеческим движением мыши.
+    - Рандомная задержка перед движением
+    - Рандомное смещение (мимо цели)
+    - Рандомная скорость движения
+    - Может быть несколько "недолетов" перед точным попаданием
+    """
     try:
         x, y = position
-        print(f"🖱️ Переміщую до ({x}, {y})")
-        pyautogui.moveTo(x, y, duration=random_duration())
         
+        # Рандомная задержка перед началом движения (0.1 - 0.5 сек)
+        initial_delay = random.uniform(0.1, 0.5)
+        time.sleep(initial_delay)
+        
+        # Решаем, будет ли промах (50% шанс)
+        # При промахе цель будет смещена на 20-100 пикселей
+        make_miss = random.random() < 0.5
+        
+        if make_miss:
+            # Выбираем случайное направление промаха
+            direction = random.choice(['left', 'right', 'up', 'down'])
+            offset = random.randint(20, 100)
+            
+            if direction == 'left':
+                miss_x = x - offset
+                miss_y = y + random.randint(-30, 30)
+            elif direction == 'right':
+                miss_x = x + offset
+                miss_y = y + random.randint(-30, 30)
+            elif direction == 'up':
+                miss_x = x + random.randint(-30, 30)
+                miss_y = y - offset
+            else:  # down
+                miss_x = x + random.randint(-30, 30)
+                miss_y = y + offset
+            
+            # Сначала двигаемся к промаху
+            print(f"🖱️ Переміщую до ({miss_x}, {miss_y}) (мимо цели)...")
+            duration = random.uniform(0.3, 0.8)
+            pyautogui.moveTo(miss_x, miss_y, duration=duration)
+            
+            # Рандомная пауза на "осмысление" (0.1 - 0.3 сек)
+            time.sleep(random.uniform(0.1, 0.3))
+            
+            # Теперь двигаемся к цели
+            print(f"🖱️ Переміщую до ({x}, {y})...")
+            duration = random.uniform(0.2, 0.6)
+            pyautogui.moveTo(x, y, duration=duration)
+        else:
+            # Без промаха - просто движемся к цели с человеческой скоростью
+            print(f"🖱️ Переміщую до ({x}, {y})...")
+            duration = random.uniform(0.3, 0.9)
+            pyautogui.moveTo(x, y, duration=duration)
+        
+        # Рандомная пауза перед кликом (0.05 - 0.2 сек)
+        time.sleep(random.uniform(0.05, 0.2))
+        
+        # Клик
         if double_click:
             pyautogui.doubleClick()
         else:
