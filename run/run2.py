@@ -37,29 +37,24 @@ def find_and_click(image_name, settings):
 
 def run_random_images(settings, images_list):
     """
-    Універсальна функція: виконує випадкову кількість кліків по картинках зі списку.
-    images_list - список картинок, напр. ["18.png", "9.png", "10.png"]
+    Функція: випадкова кількість картинок шукається, ті що знайдені - клікаються.
     """
     if not images_list:
         return True
     
-    # Скільки картинок клікнути (0 або більше)
-    num = random.randint(0, len(images_list))
-    
-    if num == 0:
-        print("🎲 Жодної картинки не клікаємо")
-        return True
+    # Скільки картинок шукаємо (від 1 до всіх)
+    num = random.randint(1, len(images_list))
     
     # Перемішуємо і беремо перші num
     random.shuffle(images_list)
-    to_click = images_list[:num]
+    to_search = images_list[:num]
     
-    print(f"🎲 Клікаємо {num} картинок: {to_click}")
+    print(f"🎲 Шукаємо {num} картинок: {to_search}")
     
-    for img in to_click:
+    for img in to_search:
         if not find_and_click(img, settings):
             return False
-        random_sleep(0.5, 3)
+        random_sleep(0.5, 2)
     
     return True
 
