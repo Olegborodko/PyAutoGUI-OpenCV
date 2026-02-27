@@ -56,9 +56,34 @@ def main_workflow():
         return False
     
     random_sleep(0.5, 3)
+
+    # КРОК 2: Пошук та клік
+    position = find_and_click("9.png", base_settings)
+    if not position:
+        return False
     
-    # Заглушка - пока просто ожидание
-    time.sleep(1)
+    random_sleep(0.5, 3)
+
+    # КРОК 3: Пошук та клік
+    position = find_and_click("10.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(0.5, 3)
+
+    # КРОК 4: Пошук та клік браузер
+    position = find_and_click("11.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(0.5, 3)
+
+    # КРОК 5: Пошук та клік блокнот
+    position = find_and_click("21.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(0.5, 3)
     
     return True
 
