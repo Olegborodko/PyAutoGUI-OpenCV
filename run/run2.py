@@ -59,11 +59,11 @@ def run_random_images(settings, images_list):
     return True
 
 def move_mouse_randomly():
-    """Просте водіння мишкою по екрану до 2 секунд"""
+    """Просте водіння мишкою по екрану до 1.5 секунд, повільно і по-людськи"""
     print("🖱️ Рухаю мишкою...")
     
-    # Рандомний час руху (0.5 - 2 секунди)
-    duration = random.uniform(0.5, 2.0)
+    # Рандомний час руху (0.3 - 1.5 секунди)
+    duration = random.uniform(0.3, 1.5)
     start_time = time.time()
     
     # Отримуємо розміри екрану
@@ -74,13 +74,13 @@ def move_mouse_randomly():
         x = random.randint(0, screen_width - 1)
         y = random.randint(0, screen_height - 1)
         
-        # Рандомна швидкість руху
-        move_duration = random.uniform(0.1, 0.3)
+        # Повільна швидкість руху (0.5 - 1.2 секунди)
+        move_duration = random.uniform(0.5, 1.2)
         
         pyautogui.moveTo(x, y, duration=move_duration)
         
-        # Рандомна пауза між рухами
-        time.sleep(random.uniform(0.05, 0.2))
+        # Пауза між рухами
+        time.sleep(random.uniform(0.1, 0.3))
     
     print("✅ Рух мишкою завершено")
 
