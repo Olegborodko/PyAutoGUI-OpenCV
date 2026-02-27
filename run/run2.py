@@ -35,6 +35,21 @@ def find_and_click(image_name, settings):
 
     return position
 
+def check_image_on_screen(image_name, settings):
+    """
+    Перевіряє чи є зображення на екрані.
+    НЕ рухає мишку, НЕ клікає. Просто повертає True/False.
+    """
+    print(f"\n🔍 Перевіряю '{image_name}' на екрані...")
+    position = find_image(image_name, settings)
+    
+    if position:
+        print(f"✅ ЗНАЙДЕНО на позиції {position}")
+        return True
+    else:
+        print(f"❌ НЕ знайдено")
+        return False
+
 def run_random_images(settings, images_list):
     """
     Функція: випадкова кількість картинок шукається, ті що знайдені - клікаються.
@@ -110,9 +125,21 @@ def main_workflow():
         # ВАРІАНТ 1: клік по 11.png, потім випадкові з [18, 9, 10]
         print("\n=== ВАРІАНТ 1: 11.png ===")
         
-        if not find_and_click("11.png", base_settings):
-            return False
-        random_sleep(0.5, 3)
+        # Клікаємо 11.png поки не з'явиться 18.png
+        while True:
+            if not find_and_click("11.png", base_settings):
+                return False
+            
+            random_sleep(0.5, 2)
+            
+            # Перевіряємо чи є 18.png
+            if check_image_on_screen("18.png", base_settings):
+                print("✅ 18.png знайдено, рухаємось далі")
+                break
+            else:
+                print("🔄 18.png не знайдено, повторюємо 11.png...")
+        
+        random_sleep(0.5, 2)
         
         # Випадкові з 18, 9, 10
         if not run_random_images(base_settings, ["18.png", "9.png", "10.png"]):
@@ -122,9 +149,36 @@ def main_workflow():
         # ВАРІАНТ 2: клік по 21.png, потім можливо ще один
         print("\n=== ВАРІАНТ 2: 21.png ===")
         
-        if not find_and_click("21.png", base_settings):
-            return False
-        random_sleep(0.5, 3)
+        # Клікаємо 21.png поки не з'явиться 22.png
+        while True:
+            if not find_and_click("21.png", base_settings):
+                return False
+            
+            random_sleep(0.5, 2)
+            
+            # Перевіряємо чи є 22.png
+            if check_image_on_screen("22.png", base_settings):
+                print("✅ 22.png знайдено, рухаємось далі")
+                break
+            else:
+                print("🔄 22.png не знайдено, повторюємо 21.png...")
+        
+        random_sleep(0.5, 2)
+        
+        # Наводимо мишку на низ 22.png і клікаємо на 10px нижче
+        bottom_settings = SearchSettings(
+            confidence=0.7,
+            grayscale=False,
+            blur=0,
+            scales=[0.9, 1.0, 1.1],
+            click_on="bottom",
+            click_offset=(0, 10),
+            max_attempts=3,
+            search_timeout=10.0
+        )
+        find_and_click("22.png", bottom_settings)
+        
+        random_sleep(0.5, 2)
         
         # 50% шанс ввести 3 випадкові символи (по-людськи)
         if random.random() < 0.5:
