@@ -3,6 +3,7 @@ import greatings
 import time
 import pyautogui
 import keyboard  # Для отслеживания горячих клавиш
+import random
 
 # Імпортуємо наші функції
 from image_utils import SearchSettings, find_image, click_at_position
@@ -34,8 +35,36 @@ def find_and_click(image_name, settings):
 
     return position
 
+def run_random_images(settings, images_list):
+    """
+    Універсальна функція: виконує випадкову кількість кліків по картинках зі списку.
+    images_list - список картинок, напр. ["18.png", "9.png", "10.png"]
+    """
+    if not images_list:
+        return True
+    
+    # Скільки картинок клікнути (0 або більше)
+    num = random.randint(0, len(images_list))
+    
+    if num == 0:
+        print("🎲 Жодної картинки не клікаємо")
+        return True
+    
+    # Перемішуємо і беремо перші num
+    random.shuffle(images_list)
+    to_click = images_list[:num]
+    
+    print(f"🎲 Клікаємо {num} картинок: {to_click}")
+    
+    for img in to_click:
+        if not find_and_click(img, settings):
+            return False
+        random_sleep(0.5, 3)
+    
+    return True
+
 def main_workflow():
-    """Основной рабочий процесс (пока пустой - будут добавляться шаги)"""
+    """Основной рабочий процесс (один проход - один choice)"""
     global should_stop
     
     # Базові налаштування пошуку зображення
@@ -50,40 +79,43 @@ def main_workflow():
         search_timeout=10.0
     )
     
-    # КРОК 1: Пошук та клік
-    position = find_and_click("18.png", base_settings)
-    if not position:
-        return False
+    # Випадковий вибір: 1 або 2
+    choice = random.randint(1, 2)
     
-    random_sleep(0.5, 3)
-
-    # КРОК 2: Пошук та клік
-    position = find_and_click("9.png", base_settings)
-    if not position:
-        return False
+    if choice == 1:
+        # ВАРІАНТ 1: клік по 11.png, потім випадкові з [18, 9, 10]
+        print("\n=== ВАРІАНТ 1: 11.png ===")
+        
+        if not find_and_click("11.png", base_settings):
+            return False
+        random_sleep(0.5, 3)
+        
+        # Випадкові з 18, 9, 10
+        if not run_random_images(base_settings, ["18.png", "9.png", "10.png"]):
+            return False
     
-    random_sleep(0.5, 3)
-
-    # КРОК 3: Пошук та клік
-    position = find_and_click("10.png", base_settings)
-    if not position:
-        return False
-    
-    random_sleep(0.5, 3)
-
-    # КРОК 4: Пошук та клік браузер
-    position = find_and_click("11.png", base_settings)
-    if not position:
-        return False
-    
-    random_sleep(0.5, 3)
-
-    # КРОК 5: Пошук та клік блокнот
-    position = find_and_click("21.png", base_settings)
-    if not position:
-        return False
-    
-    random_sleep(0.5, 3)
+    else:
+        # ВАРІАНТ 2: клік по 21.png, потім можливо ще один
+        print("\n=== ВАРІАНТ 2: 21.png ===")
+        
+        if not find_and_click("21.png", base_settings):
+            return False
+        random_sleep(0.5, 3)
+        
+        # 50% шанс ввести 3 випадкові символи (по-людськи)
+        if random.random() < 0.5:
+            # Генеруємо 3 випадкові символи (англійські літери або цифри)
+            chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            text = ''.join(random.choice(chars) for _ in range(3))
+            print(f"🎲 Вводимо текст: {text}")
+            
+            # Вводимо кожен символ окремо з випадковою затримкою
+            for char in text:
+                pyautogui.press(char)
+                # Рандомна затримка між натисканнями (0.05 - 0.8 сек)
+                time.sleep(random.uniform(0.05, 0.8))
+            
+            random_sleep(0.5, 1)
     
     return True
 
