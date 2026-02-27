@@ -63,6 +63,32 @@ def run_random_images(settings, images_list):
     
     return True
 
+def move_mouse_randomly():
+    """Просте водіння мишкою по екрану до 2 секунд"""
+    print("🖱️ Рухаю мишкою...")
+    
+    # Рандомний час руху (0.5 - 2 секунди)
+    duration = random.uniform(0.5, 2.0)
+    start_time = time.time()
+    
+    # Отримуємо розміри екрану
+    screen_width, screen_height = pyautogui.size()
+    
+    while time.time() - start_time < duration:
+        # Випадкові координати на екрані
+        x = random.randint(0, screen_width - 1)
+        y = random.randint(0, screen_height - 1)
+        
+        # Рандомна швидкість руху
+        move_duration = random.uniform(0.1, 0.3)
+        
+        pyautogui.moveTo(x, y, duration=move_duration)
+        
+        # Рандомна пауза між рухами
+        time.sleep(random.uniform(0.05, 0.2))
+    
+    print("✅ Рух мишкою завершено")
+
 def main_workflow():
     """Основной рабочий процесс (один проход - один choice)"""
     global should_stop
@@ -78,6 +104,9 @@ def main_workflow():
         max_attempts=3,
         search_timeout=10.0
     )
+    
+    # Рух мишкою перед вибором
+    move_mouse_randomly()
     
     # Випадковий вибір: 1 або 2
     choice = random.randint(1, 2)
@@ -116,6 +145,9 @@ def main_workflow():
                 time.sleep(random.uniform(0.05, 0.8))
             
             random_sleep(0.5, 1)
+    
+    # Рух мишкою після всього коду
+    move_mouse_randomly()
     
     return True
 
