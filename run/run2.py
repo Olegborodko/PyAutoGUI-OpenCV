@@ -130,7 +130,7 @@ def main_workflow():
             if not find_and_click("11.png", base_settings):
                 return False
             
-            random_sleep(0.5, 2)
+            random_sleep(2, 2)
             
             # Перевіряємо чи є 18.png
             if check_image_on_screen("18.png", base_settings):
@@ -154,7 +154,7 @@ def main_workflow():
             if not find_and_click("21.png", base_settings):
                 return False
             
-            random_sleep(0.5, 2)
+            random_sleep(2, 2)
             
             # Перевіряємо чи є 22.png
             if check_image_on_screen("22.png", base_settings):
