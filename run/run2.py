@@ -180,20 +180,20 @@ def main_workflow():
         
         random_sleep(0.5, 2)
         
-        # 50% шанс ввести 3 випадкові символи (по-людськи)
-        if random.random() < 0.5:
-            # Генеруємо 3 випадкові символи (англійські літери або цифри)
-            chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-            text = ''.join(random.choice(chars) for _ in range(3))
-            print(f"🎲 Вводимо текст: {text}")
-            
-            # Вводимо кожен символ окремо з випадковою затримкою
-            for char in text:
-                pyautogui.press(char)
-                # Рандомна затримка між натисканнями (0.05 - 0.8 сек)
-                time.sleep(random.uniform(0.05, 0.8))
-            
-            random_sleep(0.5, 1)
+# Випадкова кількість символів (1-3)
+        num_chars = random.randint(1, 3)
+        # Генеруємо випадкові символи (англійські літери або цифри)
+        chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+        text = ''.join(random.choice(chars) for _ in range(num_chars))
+        print(f"🎲 Вводимо текст: {text}")
+
+        # Вводимо кожен символ окремо з випадковою затримкою
+        for char in text:
+            pyautogui.press(char)
+            # Рандомна затримка між натисканнями (0.05 - 0.8 сек)
+            time.sleep(random.uniform(0.05, 0.8))
+
+        random_sleep(0.5, 1)
     
     # Рух мишкою після всього коду
     move_mouse_randomly()
