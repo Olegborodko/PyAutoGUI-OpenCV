@@ -185,13 +185,18 @@ def main_workflow():
         # Генеруємо випадкові символи (англійські літери або цифри)
         chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
         text = ''.join(random.choice(chars) for _ in range(num_chars))
-        print(f"🎲 Вводимо текст: {text}")
+        print(f"🎲 Вводимо текст: {text} (довжина: {len(text)})")
 
-        # Вводимо кожен символ окремо з випадковою затримкою
-        for char in text:
-            pyautogui.press(char)
-            # Рандомна затримка між натисканнями (0.05 - 0.8 сек)
-            time.sleep(random.uniform(0.05, 0.8))
+        # Перевіряємо, чи текст не порожній
+        if not text:
+            print("⚠️ Текст порожній, пропускаємо введення")
+        else:
+            # Вводимо кожен символ окремо з випадковою затримкою
+            for i, char in enumerate(text):
+                print(f"  Вводжу символ {i+1}/{len(text)}: '{char}'")
+                pyautogui.press(char)
+                # Рандомна затримка між натисканнями (0.05 - 0.5 сек)
+                time.sleep(random.uniform(0.05, 0.5))
 
         random_sleep(0.5, 1)
     
