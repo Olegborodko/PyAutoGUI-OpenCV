@@ -346,6 +346,11 @@ def main_workflow():
     
     # Рандомна затримка між кроками
     random_sleep(0.3, 1)
+
+    # КРОК 1.1
+    print("\n📝 Виділяю текст у полі (Ctrl+A)...")
+    pyautogui.hotkey('ctrl', 'a')
+    time.sleep(0.5)
     
     # КРОК 2: Клік правою кнопкою миші по позиції
     if not right_click_at_position(position[0], position[1]):
