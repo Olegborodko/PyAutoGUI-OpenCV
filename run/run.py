@@ -183,6 +183,18 @@ def check_clipboard():
         print(f"❌ Помилка буфера обміну: {e}")
         return None
 
+def right_click_at_position(x, y):
+    """Виконує клік правою кнопкою миші по заданим координатам."""
+    print(f"\n🖱️ Клікаю правою кнопкою миші за координатами ({x}, {y})...")
+    try:
+        pyautogui.click(x=x, y=y, button='right')
+        time.sleep(0.5) # Даем время на появление контекстного меню
+        print(f"✅ Клік правою кнопкою миші успішно виконано за координатами ({x}, {y}).")
+        return True
+    except Exception as e:
+        print(f"❌ Помилка при кліку правою кнопкою миші за координатами ({x}, {y}): {e}")
+        return False
+
 def test_original_with_esc(x, y):
     """Метод 1: Оригінальний метод, який працював (з Esc)"""
     print("\n🧪 Метод 1: Оригінальний метод (з Esc)")
@@ -293,7 +305,7 @@ def copy_text_from_coords(x, y):
             print(f"📄 Зміст тексту: {result[:100]}..." if len(result) > 100 else f"📄 Зміст тексту: {result}")
             return result
     
-    # ЕЩЕ ОДИН РЕЗЕРВ: оригинальная функция из text_utils.py
+    # ЕЩЕ ОДИН РЕЗЕРВ: оригінальна функція з text_utils.py
     print("🔧 Пробую оригінальну функцію копіювання...")
     result = copy_text_from_position(x, y)
     
@@ -335,9 +347,15 @@ def main_workflow():
     # Рандомна затримка між кроками
     random_sleep(0.3, 1)
     
-    # КРОК 2: Копіювання тексту з позиції
-    copied_text_from_steep2 = copy_text_from_coords(position[0], position[1])
-    if not copied_text_from_steep2:
+    # КРОК 2: Клік правою кнопкою миші по позиції
+    if not right_click_at_position(position[0], position[1]):
+        return False
+
+    random_sleep(0.3, 1)
+
+    # КРОК 2.1: клік копіювати
+    position = find_and_click("copy.png", base_settings)
+    if not position:
         return False
     
     # Перевірка на зупинку
@@ -423,11 +441,15 @@ def main_workflow():
     
     random_sleep(0.5, 1)
     
-    # КРОК 8
-    if not paste_text(copied_text_from_steep2):
-        print("❌ Не вдалося вставити текст")
+    if not right_click_at_position(position[0], position[1]):
         return False
     
+    random_sleep(0.5, 1)
+
+    position = find_and_click("insert.png", base_settings)
+    if not position:
+        return False
+
     random_sleep(0.5, 1)
     
     # КРОК 9
@@ -472,11 +494,16 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep(1)
+    random_sleep(1, 1)
 
-     # КРОК 14
-    if not paste_text(copied_text_from_steep2):
-        print("❌ Не вдалося вставити текст")
+    # КРОК 14
+    if not right_click_at_position(position[0], position[1]):
+        return False
+    
+    random_sleep(0.5, 1)
+
+    position = find_and_click("insert.png", base_settings)
+    if not position:
         return False
     
     random_sleep(0.5, 1)
@@ -527,6 +554,41 @@ def main_workflow():
         return False
     
     random_sleep(2, 2)
+
+    # КРОК 20.1
+    position = find_and_click("21.png", base_settings)
+    if not position:
+        return False
+
+    random_sleep(2, 2)
+
+    # КРОК 20.2
+    base_settings.click_on = "bottom"
+    base_settings.click_offset = (0, 10)
+    position = find_and_click("22.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(0.5, 2)
+
+    # Випадкова кількість символів (1-3)
+    num_chars = random.randint(1, 3)
+    # Генеруємо випадкові символи (англійські літери або цифри)
+    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    text = ''.join(random.choice(chars) for _ in range(num_chars))
+    print(f"🎲 Вводимо текст: {text} (довжина: {len(text)})")
+
+    # Перевіряємо, чи текст не порожній
+    if not text:
+        print("⚠️ Текст порожній, пропускаємо введення")
+    else:
+        # Вводимо кожен символ окремо з випадковою затримкою
+        for i, char in enumerate(text):
+            print(f"  Вводжу символ {i+1}/{len(text)}: '{char}'")
+            pyautogui.press(char)
+            time.sleep(random.uniform(0.2, 0.7))
+
+    random_sleep(0.5, 1)
 
     # КРОК 21
     position = find_and_click("18.png", base_settings)
