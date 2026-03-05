@@ -1,3 +1,5 @@
+import random
+
 # Імпортуємо привітання
 import greatings
 import time
