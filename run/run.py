@@ -564,6 +564,20 @@ def main_workflow():
     
     random_sleep(2, 2)
 
+    # КРОК 21
+    position = find_and_click("18.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(2, 3)
+
+    # КРОК 22
+    position = find_and_click("19.png", base_settings)
+    if not position:
+        return False
+    
+    random_sleep(2, 3)
+
     # КРОК 20.1
     position = find_and_click("21.png", base_settings)
     if not position:
@@ -596,22 +610,6 @@ def main_workflow():
             print(f"  Вводжу символ {i+1}/{len(text)}: '{char}'")
             pyautogui.press(char)
             time.sleep(random.uniform(0.2, 0.7))
-
-    random_sleep(0.5, 1)
-
-    # КРОК 21
-    position = find_and_click("18.png", base_settings)
-    if not position:
-        return False
-    
-    random_sleep(3, 3)
-
-    # КРОК 22
-    position = find_and_click("19.png", base_settings)
-    if not position:
-        return False
-    
-    random_sleep(3, 3)
     
     # КРОК 23
     position = find_and_click("15.png", base_settings)
