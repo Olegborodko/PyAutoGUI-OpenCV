@@ -197,6 +197,33 @@ def right_click_at_position(x, y):
         print(f"❌ Помилка при кліку правою кнопкою миші за координатами ({x}, {y}): {e}")
         return False
 
+def move_mouse_randomly():
+    """Просте водіння мишкою по екрану до 1.5 секунд, повільно і по-людськи"""
+    print("🖱️ Рухаю мишкою...")
+    
+    # Рандомний час руху (0.3 - 1.5 секунди)
+    duration = random.uniform(0.3, 1.5)
+    start_time = time.time()
+    
+    # Отримуємо розміри екрану
+    screen_width, screen_height = pyautogui.size()
+    
+    while time.time() - start_time < duration:
+        # Випадкові координати на екрані
+        x = random.randint(0, screen_width - 1)
+        y = random.randint(0, screen_height - 1)
+        
+        # Повільна швидкість руху (0.5 - 1.2 секунди)
+        move_duration = random.uniform(0.5, 1.2)
+        
+        pyautogui.moveTo(x, y, duration=move_duration)
+        
+        # Пауза між рухами
+        time.sleep(random.uniform(0.1, 0.3))
+    
+    print("✅ Рух мишкою завершено")
+
+
 def test_original_with_esc(x, y):
     """Метод 1: Оригінальний метод, який працював (з Esc)"""
     print("\n🧪 Метод 1: Оригінальний метод (з Esc)")
@@ -389,6 +416,8 @@ def main_workflow():
     # Перевірка на зупинку
     if should_stop:
         return False
+
+    move_mouse_randomly()
     
     print("\n⏳ Затримка 3 секунд щоб відкрився браузер")
     time.sleep(3)
@@ -467,6 +496,8 @@ def main_workflow():
 
     random_sleep(1, 2)
 
+    move_mouse_randomly()
+
     # КРОК 10
     base_settings.click_on = "center"
     base_settings.click_offset = (0, 0)
@@ -521,6 +552,8 @@ def main_workflow():
     print("\n↵ Натискаю клавішу Enter...")
     pyautogui.press('enter')
 
+    move_mouse_randomly()
+
     # КРОК 16
     base_settings.click_on = "bottom"
     base_settings.click_offset = (0, 10)
@@ -557,6 +590,8 @@ def main_workflow():
     
     random_sleep(0.5, 1)
 
+    move_mouse_randomly()
+
     # КРОК 20
     position = find_and_click("14.png", base_settings)
     if not position:
@@ -564,12 +599,16 @@ def main_workflow():
     
     random_sleep(2, 2)
 
+    move_mouse_randomly()
+
     # КРОК 21
     position = find_and_click("18.png", base_settings)
     if not position:
         return False
     
     random_sleep(2, 3)
+
+    move_mouse_randomly()
 
     # КРОК 22
     position = find_and_click("19.png", base_settings)
@@ -584,6 +623,8 @@ def main_workflow():
         return False
 
     random_sleep(2, 2)
+
+    move_mouse_randomly()
 
     # КРОК 20.2
     base_settings.click_on = "bottom"
@@ -616,7 +657,7 @@ def main_workflow():
     if not position:
         return False
     
-    random_sleep(3, 5)
+    random_sleep(3, 4)
 
     # КРОК 24
     position = find_and_click("2.png", base_settings)
