@@ -359,6 +359,8 @@ def main_workflow():
     random_sleep(0.3, 1)
 
     # КРОК 2.1: клік копіювати
+    base_settings.click_on = center
+    base_settings.click_offset = (0, 0)
     position = find_and_click("copy.png", base_settings)
     if not position:
         return False
