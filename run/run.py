@@ -389,6 +389,14 @@ def main_workflow():
         return False
 
     random_sleep(0.3, 1)
+
+    base_settings.click_on = "bottom"
+    base_settings.click_offset = (0, 3) # на 3px нижче
+    position = find_and_click("1.png", base_settings)
+    if not position:
+        return False
+
+    random_sleep(0.3, 1)
     
     # КРОК 2: Клік правою кнопкою миші по позиції
     if not right_click_at_position(position[0], position[1]):
