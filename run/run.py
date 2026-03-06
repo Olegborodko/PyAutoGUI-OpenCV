@@ -531,8 +531,8 @@ def main_workflow():
     # КРОК 12.1:
     base_settings.click_on = "center"
     base_settings.click_offset = (0, 0)
-    position = find_and_click("select_all_2.png", base_settings)
-    if not position:
+    position_next = find_and_click("select_all_2.png", base_settings)
+    if not position_next:
         return False
 
     random_sleep(0.3, 1)
@@ -543,8 +543,8 @@ def main_workflow():
     
     random_sleep(0.5, 1)
 
-    position = find_and_click("insert.png", base_settings)
-    if not position:
+    position_next = find_and_click("insert.png", base_settings)
+    if not position_next:
         return False
     
     random_sleep(0.5, 1)
