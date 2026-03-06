@@ -384,16 +384,16 @@ def main_workflow():
     
     base_settings.click_on = "bottom"
     base_settings.click_offset = (0, 5)
-    position = find_and_click("select_all.png", base_settings)
-    if not position:
+    position_next = find_and_click("select_all.png", base_settings)
+    if not position_next:
         return False
 
     random_sleep(0.3, 1)
 
     base_settings.click_on = "bottom"
     base_settings.click_offset = (0, 3) # на 3px нижче
-    position = find_and_click("1.png", base_settings)
-    if not position:
+    position_next = find_and_click("1.png", base_settings)
+    if not position_next:
         return False
 
     random_sleep(0.3, 1)
