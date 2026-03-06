@@ -475,10 +475,10 @@ def main_workflow():
     random_sleep(0.3, 1)
 
     # КРОК 6.1:
-    base_settings.click_on = "cener"
+    base_settings.click_on = "center"
     base_settings.click_offset = (0, 0)
-    position = find_and_click("select_all_2.png", base_settings)
-    if not position:
+    position_next = find_and_click("select_all_2.png", base_settings)
+    if not position_next:
         return False
     
     random_sleep(0.3, 1)
