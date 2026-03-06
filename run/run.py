@@ -376,10 +376,19 @@ def main_workflow():
     # Рандомна затримка між кроками
     random_sleep(0.3, 1)
 
-    # КРОК 1.1
-    print("\n📝 Виділяю текст у полі (Ctrl+A)...")
-    pyautogui.hotkey('ctrl', 'a')
-    time.sleep(0.5)
+    # КРОК 1.1: Клік правою кнопкою миші по позиції
+    if not right_click_at_position(position[0], position[1]):
+        return False
+
+    random_sleep(0.3, 1)
+    
+    base_settings.click_on = "bottom"
+    base_settings.click_offset = (0, 5)
+    position = find_and_click("select_all.png", base_settings)
+    if not position:
+        return False
+
+    random_sleep(0.3, 1)
     
     # КРОК 2: Клік правою кнопкою миші по позиції
     if not right_click_at_position(position[0], position[1]):
@@ -460,25 +469,21 @@ def main_workflow():
         return False
 
     # КРОК 6: Виділяємо та видаляємо текст з текстового поля
-    print("\n✂️ Виділяю та видаляю текст з текстового поля...")
-    text_deleted = select_and_delete_from_position(position[0], position[1])
+    if not right_click_at_position(position[0], position[1]):
+        return False
     
-    if not text_deleted:
-        print("❌ Не вдалося виділити та видалити текст")
+    random_sleep(0.3, 1)
+
+    # КРОК 6.1:
+    base_settings.click_on = "cener"
+    base_settings.click_offset = (0, 0)
+    position = find_and_click("select_all_2.png", base_settings)
+    if not position:
         return False
     
     random_sleep(0.3, 1)
 
     # КРОК 7: Пошук та клік
-    base_settings.click_on = "right"
-    base_settings.click_offset = (3, 0) # на 3px правіше
-    
-    position = find_and_click("12.png", base_settings)
-    if not position:
-        return False
-    
-    random_sleep(0.5, 1)
-    
     if not right_click_at_position(position[0], position[1]):
         return False
     
@@ -518,23 +523,19 @@ def main_workflow():
     random_sleep(1)
 
     # КРОК 12: Виділяємо та видаляємо текст з текстового поля
-    print("\n✂️ Виділяю та видаляю текст з текстового поля...")
-    text_deleted = select_and_delete_from_position(position[0], position[1])
-    
-    if not text_deleted:
-        print("❌ Не вдалося виділити та видалити текст")
+    if not right_click_at_position(position[0], position[1]):
         return False
     
     random_sleep(0.3, 1)
 
-    # КРОК 13
-    base_settings.click_on = "bottom"
-    base_settings.click_offset = (0, 3)
-    position = find_and_click("13.png", base_settings)
+    # КРОК 12.1:
+    base_settings.click_on = "center"
+    base_settings.click_offset = (0, 0)
+    position = find_and_click("select_all_2.png", base_settings)
     if not position:
         return False
-    
-    random_sleep(1, 1)
+
+    random_sleep(0.3, 1)
 
     # КРОК 14
     if not right_click_at_position(position[0], position[1]):
